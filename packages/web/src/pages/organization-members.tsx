@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
 import {
   Avatar,
   AvatarFallback,
@@ -40,23 +39,22 @@ function getInitials(name: string) {
 }
 
 export default function OrganizationMembers() {
-  const { orgId } = useParams<{ orgId: string }>()
   const { data: session } = authClient.useSession()
-  const { data: org, isLoading: loading } = useOrganization(orgId)
+  const { data: org, isLoading: loading } = useOrganization()
   const invalidateOrg = useInvalidateOrganization()
   const [removingMember, setRemovingMember] = useState<OrgData['members'][number] | null>(null)
   const [inviteOpen, setInviteOpen] = useState(false)
 
   const handleRoleChange = async (memberId: string, role: string) => {
     await authClient.organization.updateMemberRole({ memberId, role })
-    await invalidateOrg(orgId!)
+    await invalidateOrg()
   }
 
   const handleRemove = async () => {
     if (!removingMember) return
     await authClient.organization.removeMember({ memberIdOrEmail: removingMember.id })
     setRemovingMember(null)
-    await invalidateOrg(orgId!)
+    await invalidateOrg()
   }
 
   if (loading) {
@@ -167,12 +165,14 @@ export default function OrganizationMembers() {
         </DialogContent>
       </Dialog>
 
-      <InviteMemberDialog
-        open={inviteOpen}
-        onOpenChange={setInviteOpen}
-        orgId={orgId!}
-        onSuccess={() => invalidateOrg(orgId!)}
-      />
+      {org ? (
+        <InviteMemberDialog
+          open={inviteOpen}
+          onOpenChange={setInviteOpen}
+          orgId={org.id}
+          onSuccess={() => invalidateOrg()}
+        />
+      ) : null}
     </div>
   )
 }

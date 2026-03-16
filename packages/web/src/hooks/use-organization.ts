@@ -5,8 +5,7 @@ export type OrgData = NonNullable<
   Awaited<ReturnType<typeof authClient.organization.getFullOrganization>>['data']
 >
 
-async function fetchOrganization(orgId: string): Promise<OrgData> {
-  await authClient.organization.setActive({ organizationId: orgId })
+async function fetchOrganization(): Promise<OrgData> {
   const { data, error } = await authClient.organization.getFullOrganization()
   if (error || !data) {
     throw new Error('Failed to load organization')
@@ -14,15 +13,18 @@ async function fetchOrganization(orgId: string): Promise<OrgData> {
   return data
 }
 
-export function useOrganization(orgId: string | undefined) {
+export function useOrganization() {
+  const { data: activeOrg } = authClient.useActiveOrganization()
+
   return useQuery({
-    queryKey: ['organization', orgId],
-    queryFn: () => fetchOrganization(orgId!),
-    enabled: !!orgId,
+    queryKey: ['organization', activeOrg?.id],
+    queryFn: fetchOrganization,
+    enabled: !!activeOrg?.id,
   })
 }
 
 export function useInvalidateOrganization() {
   const queryClient = useQueryClient()
-  return (orgId: string) => queryClient.invalidateQueries({ queryKey: ['organization', orgId] })
+  const { data: activeOrg } = authClient.useActiveOrganization()
+  return () => queryClient.invalidateQueries({ queryKey: ['organization', activeOrg?.id] })
 }

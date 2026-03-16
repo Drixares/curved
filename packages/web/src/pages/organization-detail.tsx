@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { InviteMemberDialog } from '@/components/invite-member-dialog'
 import {
   Avatar,
@@ -27,8 +27,7 @@ function getInitials(name: string) {
 }
 
 export default function OrganizationDetail() {
-  const { orgId } = useParams<{ orgId: string }>()
-  const { data: org, isLoading: loading } = useOrganization(orgId)
+  const { data: org, isLoading: loading } = useOrganization()
   const [inviteOpen, setInviteOpen] = useState(false)
 
   if (loading) {
@@ -70,11 +69,7 @@ export default function OrganizationDetail() {
             <Badge variant="secondary">{org.members.length}</Badge>
           </CardTitle>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              render={<Link to={`/organizations/${orgId}/members`} />}
-            >
+            <Button variant="outline" size="sm" render={<Link to="/organization/members" />}>
               Manage
             </Button>
             <Button size="sm" onClick={() => setInviteOpen(true)}>
@@ -104,7 +99,9 @@ export default function OrganizationDetail() {
         </CardContent>
       </Card>
 
-      <InviteMemberDialog open={inviteOpen} onOpenChange={setInviteOpen} orgId={orgId!} />
+      {org ? (
+        <InviteMemberDialog open={inviteOpen} onOpenChange={setInviteOpen} orgId={org.id} />
+      ) : null}
     </div>
   )
 }

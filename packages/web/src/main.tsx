@@ -45,8 +45,8 @@ createRoot(document.getElementById('root')!).render(
                 <Route element={<DashboardLayout />}>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/tasks" element={<Tasks />} />
-                  <Route path="/organizations/:orgId" element={<OrganizationDetail />} />
-                  <Route path="/organizations/:orgId/members" element={<OrganizationMembers />} />
+                  <Route path="/organization" element={<OrganizationDetail />} />
+                  <Route path="/organization/members" element={<OrganizationMembers />} />
                 </Route>
               </Route>
             </Routes>

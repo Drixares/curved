@@ -98,11 +98,7 @@ export function DashboardSidebar() {
                   Settings
                   <DropdownMenuShortcut>G then S</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    if (activeOrg?.id) navigate(`/organizations/${activeOrg.id}/members`)
-                  }}
-                >
+                <DropdownMenuItem onClick={() => navigate('/organization/members')}>
                   <HugeiconsIcon icon={UserGroupIcon} size={16} strokeWidth={1.5} />
                   Invite and manage members
                 </DropdownMenuItem>
