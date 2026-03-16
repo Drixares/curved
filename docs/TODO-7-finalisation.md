@@ -12,7 +12,7 @@
 ## Rendu
 
 - [ ] Lister les noms des membres du groupe
-- [ ] S'assurer que le repo GitLab est public
+- [ ] S'assurer que le repo GitHub est public
 - [ ] Récupérer l'URL CloudFront du frontend web (PRD)
 - [ ] Récupérer l'URL CloudFront du frontend admin (PRD)
 - [ ] Préparer et enregistrer la vidéo de présentation (10 min max)

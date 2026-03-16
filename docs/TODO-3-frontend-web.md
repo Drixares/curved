@@ -5,7 +5,7 @@
 
 ## Routing & Layout
 
-- [ ] Configurer React Router dans `main.tsx` (BrowserRouter ou createBrowserRouter)
+- [x] Configurer React Router dans `main.tsx` (BrowserRouter)
 - [ ] Créer un layout auth (`/sign-in`, `/sign-up`) — sans sidebar/navbar
 - [ ] Créer un layout app (routes protégées) — avec sidebar/navbar
 - [ ] Middleware/guard d'authentification — rediriger vers `/sign-in` si non connecté
@@ -13,9 +13,14 @@
 
 ## Pages
 
+### Auth
+
+- [x] `/sign-in` — page de connexion (email/password + OAuth Google & GitHub)
+- [x] `/sign-up` — page d'inscription (name/email/password + OAuth)
+
 ### Dashboard
 
-- [ ] `/dashboard` — page d'accueil connecté, liste des équipes de l'utilisateur
+- [~] `/dashboard` — page d'accueil connecté (affiche le profil utilisateur, manque la liste des équipes)
 
 ### Profil
 
@@ -65,6 +70,6 @@
 
 ## Services / Hooks
 
-- [ ] `useAuth()` — hook pour récupérer l'utilisateur connecté
+- [x] Auth client configuré via `better-auth/react` (`lib/auth-client.ts`) — `authClient.signIn`, `authClient.signUp`, `authClient.useSession`
 - [ ] Configurer un client HTTP (fetch wrapper ou bibliothèque) avec le token JWT
 - [ ] Hooks pour chaque entité : `useTeams()`, `useProjects()`, `useTasks()`, etc.

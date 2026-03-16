@@ -89,7 +89,7 @@ Déployer toute l'application sur AWS.
 
 Mettre en place le pipeline de déploiement continu.
 
-1. **Migrer vers GitLab** — push du repo sur GitLab
+1. **Configurer GitHub Actions** — mise en place des workflows CI/CD
 2. **Pipeline CI** — lint, type-check, build sur chaque push
 3. **Pipeline CD staging** — déploiement automatique sur l'env STG
 4. **Pipeline CD production** — déploiement sur l'env PRD (manual trigger ou merge sur main)
@@ -102,4 +102,4 @@ Mettre en place le pipeline de déploiement continu.
 1. Tests manuels end-to-end sur STG puis PRD
 2. Créer la liste des services AWS actifs (pour suppression post-rendu)
 3. Préparer la vidéo de présentation (10 min max)
-4. Déposer le rendu (lien GitLab, URLs CloudFront, vidéo)
+4. Déposer le rendu (lien GitHub, URLs CloudFront, vidéo)

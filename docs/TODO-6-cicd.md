@@ -1,11 +1,9 @@
 # TODO Phase 6 — CI/CD & Environnements
 
-## Migration vers GitLab
+## Configuration GitHub
 
-- [ ] Créer le repo sur GitLab
-- [ ] Ajouter le remote GitLab (`git remote add gitlab ...`)
-- [ ] Push le code sur GitLab
-- [ ] Configurer les variables CI/CD dans GitLab (Settings → CI/CD → Variables) :
+- [ ] S'assurer que le repo est sur GitHub
+- [ ] Configurer les secrets dans GitHub (Settings → Secrets and variables → Actions) :
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
   - `AWS_REGION`
@@ -16,22 +14,22 @@
   - `CLOUDFRONT_DISTRIBUTION_ADMIN_STG` / `PRD`
   - `DATABASE_URL_STG` / `DATABASE_URL_PRD`
 
-## Pipeline `.gitlab-ci.yml`
+## Pipeline GitHub Actions (`.github/workflows/`)
 
-### Stage : lint
+### Job : lint
 
 - [ ] Installer les dépendances (`bun install`)
 - [ ] Lancer Prettier (`bun run checks`)
 - [ ] Lancer le type-check TypeScript
 
-### Stage : build
+### Job : build
 
 - [ ] Build de `@curved/ui`
 - [ ] Build de `@curved/web`
 - [ ] Build de `@curved/admin`
 - [ ] Build/package de `@curved/api`
 
-### Stage : deploy-stg (automatique sur push vers `develop` ou `staging`)
+### Job : deploy-stg (automatique sur push vers `develop` ou `staging`)
 
 - [ ] Upload du build web vers S3 STG
 - [ ] Upload du build admin vers S3 STG
@@ -39,7 +37,7 @@
 - [ ] Invalider le cache CloudFront STG
 - [ ] Appliquer les migrations DB sur RDS STG
 
-### Stage : deploy-prd (manuel, sur merge vers `main`)
+### Job : deploy-prd (manuel via `workflow_dispatch`, ou sur merge vers `main`)
 
 - [ ] Upload du build web vers S3 PRD
 - [ ] Upload du build admin vers S3 PRD

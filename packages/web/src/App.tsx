@@ -15,12 +15,12 @@ import {
   AvatarFallback,
   AvatarGroup,
   Separator,
-  Switch,
   Tabs,
   TabsList,
   TabsTrigger,
   TabsContent,
 } from '@curved/ui'
+import AppHeader from './components/app-header'
 
 function App() {
   const [darkMode, setDarkMode] = useState(false)
@@ -28,26 +28,7 @@ function App() {
   return (
     <div className={darkMode ? 'dark' : ''}>
       <div className="bg-background text-foreground min-h-screen">
-        {/* Header */}
-        <header className="border-border border-b">
-          <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-            <span className="text-lg font-semibold">Curved</span>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground text-sm">Dark</span>
-                <Switch checked={darkMode} onCheckedChange={setDarkMode} size="sm" />
-              </div>
-              <Link to="/sign-in">
-                <Button variant="outline" size="sm">
-                  Sign in
-                </Button>
-              </Link>
-              <Link to="/sign-up">
-                <Button size="sm">Get started</Button>
-              </Link>
-            </div>
-          </div>
-        </header>
+        <AppHeader darkMode={darkMode} onDarkModeChange={setDarkMode} />
 
         {/* Hero */}
         <section className="mx-auto max-w-5xl px-6 py-20 text-center">

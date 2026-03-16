@@ -104,8 +104,8 @@
 
 ### CI/CD
 
-- GitLab
-- GitLab CI/CD
+- GitHub
+- GitHub Actions
 
 ### Environnements
 
@@ -133,7 +133,7 @@ Par groupe de 3 maximum (1 dépôt par groupe est suffisant).
 ### À fournir
 
 - Noms des membres du groupe
-- Lien du repository public sur GitLab
+- Lien du repository public sur GitHub
 - URL CloudFront Front User
 - URL CloudFront Front Admin
 - Lien d'une présentation vidéo de 10 min MAX par groupe pour montrer ce qui semble le plus pertinent

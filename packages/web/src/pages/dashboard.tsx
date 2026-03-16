@@ -16,25 +16,10 @@ import { authClient } from '@/lib/auth-client'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { data: session, isPending } = authClient.useSession()
+  const { data: session } = authClient.useSession()
 
-  const handleSignOut = async () => {
-    await authClient.signOut()
-    navigate('/sign-in')
-  }
-
-  if (isPending) {
-    return (
-      <div className="bg-background flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    )
-  }
-
-  if (!session) {
-    navigate('/sign-in')
-    return null
-  }
+  // ProtectedRoute guarantees session exists
+  if (!session) return null
 
   const user = session.user
   const initials = user.name
@@ -43,6 +28,11 @@ export default function Dashboard() {
     .join('')
     .toUpperCase()
     .slice(0, 2)
+
+  const handleSignOut = async () => {
+    await authClient.signOut()
+    navigate('/sign-in')
+  }
 
   return (
     <div className="bg-background text-foreground min-h-screen">
@@ -72,7 +62,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent className="flex items-center gap-4">
               <Avatar className="size-12">
-                {user.image && <AvatarImage src={user.image} alt={user.name} />}
+                {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
                 <AvatarFallback className="text-lg">{initials}</AvatarFallback>
               </Avatar>
               <div>
