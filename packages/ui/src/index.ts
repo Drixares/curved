@@ -81,6 +81,7 @@ export {
   InputGroupText,
   InputGroupInput,
 } from './components/ui/input-group'
+export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './components/ui/collapsible'
 export {
   Dialog,
   DialogClose,

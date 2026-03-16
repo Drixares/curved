@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom'
 
 const pages = [
   { to: '/dashboard', label: 'Dashboard', icon: Home09Icon },
-  { to: '/tasks', label: 'Tasks', icon: Task01Icon },
+  { to: '/issues', label: 'Issues', icon: Task01Icon },
   { to: '/settings', label: 'Settings', icon: Settings01Icon },
 ]
 

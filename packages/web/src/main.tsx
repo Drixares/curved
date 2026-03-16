@@ -12,9 +12,11 @@ import './index.css'
 const SignIn = lazy(() => import('./pages/sign-in'))
 const SignUp = lazy(() => import('./pages/sign-up'))
 const DashboardLayout = lazy(() => import('./components/dashboard-layout'))
+const SettingsLayout = lazy(() => import('./components/settings-layout'))
 const Dashboard = lazy(() => import('./pages/dashboard'))
-const Tasks = lazy(() => import('./pages/tasks'))
+const Issues = lazy(() => import('./pages/issues'))
 const CreateOrganization = lazy(() => import('./pages/create-organization'))
+const CreateTeam = lazy(() => import('./pages/create-team'))
 const OrganizationDetail = lazy(() => import('./pages/organization-detail'))
 const OrganizationMembers = lazy(() => import('./pages/organization-members'))
 const InvitationAccept = lazy(() => import('./pages/invitation-accept'))
@@ -44,9 +46,12 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="/create-organization" element={<CreateOrganization />} />
                 <Route element={<DashboardLayout />}>
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/tasks" element={<Tasks />} />
-                  <Route path="/organization" element={<OrganizationDetail />} />
-                  <Route path="/organization/members" element={<OrganizationMembers />} />
+                  <Route path="/issues" element={<Issues />} />
+                  <Route path="/teams/create" element={<CreateTeam />} />
+                </Route>
+                <Route element={<SettingsLayout />}>
+                  <Route path="/settings" element={<OrganizationDetail />} />
+                  <Route path="/settings/members" element={<OrganizationMembers />} />
                 </Route>
               </Route>
             </Routes>

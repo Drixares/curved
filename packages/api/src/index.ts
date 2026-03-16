@@ -1,8 +1,8 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { db } from './db'
-import { invitation, organization, user } from './db/schema'
+import { invitation, organization, team, teamMember, user } from './db/schema'
 import { auth } from './lib/auth'
 import { adminMiddleware } from './middleware/admin'
 import { authMiddleware, type AuthVariables } from './middleware/auth'
@@ -107,6 +107,81 @@ app.use('/api/admin/*', adminMiddleware)
 
 // Org member middleware
 app.use('/api/organizations/:orgId/*', orgMemberMiddleware)
+
+// List teams for the active organization
+app.get('/api/teams', async (c) => {
+  const session = c.get('session')
+  const orgId = session.activeOrganizationId
+
+  if (!orgId) {
+    return c.json({ error: 'No active organization' }, 400)
+  }
+
+  const teams = await db.query.team.findMany({
+    where: eq(team.organizationId, orgId),
+    columns: {
+      id: true,
+      name: true,
+      slug: true,
+      identifier: true,
+      icon: true,
+    },
+    orderBy: (team, { asc }) => [asc(team.name)],
+  })
+
+  return c.json(teams)
+})
+
+// Create a team
+app.post('/api/teams', async (c) => {
+  const session = c.get('session')
+  const userId = c.get('user').id
+  const orgId = session.activeOrganizationId
+
+  if (!orgId) {
+    return c.json({ error: 'No active organization' }, 400)
+  }
+
+  const { name, identifier, slug } = await c.req.json<{
+    name: string
+    identifier: string
+    slug: string
+  }>()
+
+  if (!name || !identifier || !slug) {
+    return c.json({ error: 'Name, identifier, and slug are required' }, 400)
+  }
+
+  // Check identifier uniqueness within the org
+  const existing = await db.query.team.findFirst({
+    where: and(eq(team.organizationId, orgId), eq(team.identifier, identifier)),
+    columns: { id: true },
+  })
+
+  if (existing) {
+    return c.json({ error: 'A team with this identifier already exists' }, 409)
+  }
+
+  const id = crypto.randomUUID()
+
+  await db.insert(team).values({
+    id,
+    name: name.trim(),
+    identifier: identifier.toUpperCase(),
+    slug,
+    organizationId: orgId,
+  })
+
+  // Add creator as team owner
+  await db.insert(teamMember).values({
+    id: crypto.randomUUID(),
+    teamId: id,
+    userId,
+    role: 'owner',
+  })
+
+  return c.json({ id, name, identifier, slug }, 201)
+})
 
 // Check slug availability
 app.post('/api/organization/check-slug', async (c) => {

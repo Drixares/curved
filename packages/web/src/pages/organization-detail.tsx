@@ -1,21 +1,21 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { InviteMemberDialog } from '@/components/invite-member-dialog'
+import { useOrganization, type OrgData } from '@/hooks/use-organization'
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
   AvatarGroup,
+  AvatarImage,
+  Badge,
   Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Badge,
 } from '@curved/ui'
+import { Add01Icon, UserGroupIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { UserGroupIcon, Add01Icon } from '@hugeicons/core-free-icons'
-import { useOrganization, type OrgData } from '@/hooks/use-organization'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 function getInitials(name: string) {
   return name
@@ -62,7 +62,7 @@ export default function OrganizationDetail() {
       </div>
 
       <Card>
-        <CardHeader className="flex-row items-center justify-between">
+        <CardHeader className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <HugeiconsIcon icon={UserGroupIcon} size={18} strokeWidth={1.5} />
             Members

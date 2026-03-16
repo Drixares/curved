@@ -10,7 +10,7 @@ export const team = pgTable(
     identifier: text('identifier').notNull(),
     description: text('description'),
     icon: text('icon'),
-    taskCounter: integer('task_counter').default(0).notNull(),
+    issueCounter: integer('issue_counter').default(0).notNull(),
     organizationId: text('organization_id')
       .notNull()
       .references(() => organization.id, { onDelete: 'cascade' }),

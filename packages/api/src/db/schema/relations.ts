@@ -4,7 +4,7 @@ import { team, teamMember } from './team'
 import { status } from './status'
 import { label } from './label'
 import { project, projectMember, projectDependency } from './project'
-import { task, taskLabel } from './task'
+import { issue, issueLabel } from './issue'
 
 // ---------------------------------------------------------------------------
 // Auth
@@ -18,8 +18,8 @@ export const userRelations = relations(user, ({ many }) => ({
   teamMembers: many(teamMember),
   projectMembers: many(projectMember),
   ledProjects: many(project),
-  assignedTasks: many(task, { relationName: 'assignedTasks' }),
-  createdTasks: many(task, { relationName: 'createdTasks' }),
+  assignedIssues: many(issue, { relationName: 'assignedIssues' }),
+  createdIssues: many(issue, { relationName: 'createdIssues' }),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -81,7 +81,7 @@ export const teamRelations = relations(team, ({ one, many }) => ({
   }),
   members: many(teamMember),
   projects: many(project),
-  tasks: many(task),
+  issues: many(issue),
   statuses: many(status),
   labels: many(label),
 }))
@@ -110,7 +110,7 @@ export const statusRelations = relations(status, ({ one, many }) => ({
     fields: [status.teamId],
     references: [team.id],
   }),
-  tasks: many(task),
+  issues: many(issue),
 }))
 
 // ---------------------------------------------------------------------------
@@ -126,7 +126,7 @@ export const labelRelations = relations(label, ({ one, many }) => ({
     fields: [label.teamId],
     references: [team.id],
   }),
-  taskLabels: many(taskLabel),
+  issueLabels: many(issueLabel),
 }))
 
 // ---------------------------------------------------------------------------
@@ -143,7 +143,7 @@ export const projectRelations = relations(project, ({ one, many }) => ({
     references: [user.id],
   }),
   members: many(projectMember),
-  tasks: many(task),
+  issues: many(issue),
   dependencies: many(projectDependency, { relationName: 'project' }),
   dependents: many(projectDependency, { relationName: 'dependsOn' }),
 }))
@@ -173,42 +173,42 @@ export const projectDependencyRelations = relations(projectDependency, ({ one })
 }))
 
 // ---------------------------------------------------------------------------
-// Tasks
+// Issues
 // ---------------------------------------------------------------------------
 
-export const taskRelations = relations(task, ({ one, many }) => ({
+export const issueRelations = relations(issue, ({ one, many }) => ({
   team: one(team, {
-    fields: [task.teamId],
+    fields: [issue.teamId],
     references: [team.id],
   }),
   project: one(project, {
-    fields: [task.projectId],
+    fields: [issue.projectId],
     references: [project.id],
   }),
   status: one(status, {
-    fields: [task.statusId],
+    fields: [issue.statusId],
     references: [status.id],
   }),
   assignee: one(user, {
-    fields: [task.assigneeId],
+    fields: [issue.assigneeId],
     references: [user.id],
-    relationName: 'assignedTasks',
+    relationName: 'assignedIssues',
   }),
   creator: one(user, {
-    fields: [task.creatorId],
+    fields: [issue.creatorId],
     references: [user.id],
-    relationName: 'createdTasks',
+    relationName: 'createdIssues',
   }),
-  labels: many(taskLabel),
+  labels: many(issueLabel),
 }))
 
-export const taskLabelRelations = relations(taskLabel, ({ one }) => ({
-  task: one(task, {
-    fields: [taskLabel.taskId],
-    references: [task.id],
+export const issueLabelRelations = relations(issueLabel, ({ one }) => ({
+  issue: one(issue, {
+    fields: [issueLabel.issueId],
+    references: [issue.id],
   }),
   label: one(label, {
-    fields: [taskLabel.labelId],
+    fields: [issueLabel.labelId],
     references: [label.id],
   }),
 }))
