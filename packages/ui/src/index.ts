@@ -75,3 +75,9 @@ export {
   SelectTrigger,
   SelectValue,
 } from './components/ui/select'
+export {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupInput,
+} from './components/ui/input-group'

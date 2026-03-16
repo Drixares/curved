@@ -69,14 +69,16 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const effectiveWidth = collapsed ? 0 : sidebarWidth
 
   return (
-    <SidebarContext value={{
-      effectiveWidth,
-      sidebarWidth,
-      minWidth: MIN_WIDTH,
-      isResizing,
-      handleMouseDown,
-      handleClick,
-    }}>
+    <SidebarContext
+      value={{
+        effectiveWidth,
+        sidebarWidth,
+        minWidth: MIN_WIDTH,
+        isResizing,
+        handleMouseDown,
+        handleClick,
+      }}
+    >
       {children}
     </SidebarContext>
   )

@@ -1,10 +1,12 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { authClient } from '@/lib/auth-client'
 
 export default function ProtectedRoute() {
-  const { data: session, isPending } = authClient.useSession()
+  const { data: session, isPending: sessionPending } = authClient.useSession()
+  const { data: organizations, isPending: orgsPending } = authClient.useListOrganizations()
+  const location = useLocation()
 
-  if (isPending) {
+  if (sessionPending || orgsPending) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">Loading...</p>
@@ -14,6 +16,13 @@ export default function ProtectedRoute() {
 
   if (!session) {
     return <Navigate to="/sign-in" replace />
+  }
+
+  if (
+    (!organizations || organizations.length === 0) &&
+    location.pathname !== '/create-organization'
+  ) {
+    return <Navigate to="/create-organization" replace />
   }
 
   return <Outlet />

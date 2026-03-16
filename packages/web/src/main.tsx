@@ -12,6 +12,7 @@ const SignUp = lazy(() => import('./pages/sign-up'))
 const DashboardLayout = lazy(() => import('./components/dashboard-layout'))
 const Dashboard = lazy(() => import('./pages/dashboard'))
 const Tasks = lazy(() => import('./pages/tasks'))
+const CreateOrganization = lazy(() => import('./pages/create-organization'))
 
 function Loading() {
   return (
@@ -33,6 +34,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/sign-up" element={<SignUp />} />
             </Route>
             <Route element={<ProtectedRoute />}>
+              <Route path="/create-organization" element={<CreateOrganization />} />
               <Route element={<DashboardLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tasks" element={<Tasks />} />

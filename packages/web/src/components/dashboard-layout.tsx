@@ -1,6 +1,7 @@
 import { SidebarProvider, useSidebar } from '@/contexts/sidebar-context'
 import { Outlet } from 'react-router-dom'
 import { DashboardSidebar } from './dashboard-sidebar'
+import { CommandMenu } from './command-menu'
 
 function DashboardLayoutContent() {
   const { handleMouseDown, handleClick } = useSidebar()
@@ -20,6 +21,8 @@ function DashboardLayoutContent() {
       <main className="bg-background border-border m-2 ml-0 min-h-0 flex-1 overflow-auto rounded-lg border">
         <Outlet />
       </main>
+
+      <CommandMenu />
     </div>
   )
 }

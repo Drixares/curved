@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
+import { z } from 'zod'
 import {
   Button,
   Card,
@@ -15,33 +18,38 @@ import {
 import { authClient } from '@/lib/auth-client'
 import SocialAuthButtons from '@/components/social-auth-buttons'
 
+const signUpSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.email('Please enter a valid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+})
+
+type SignUpValues = z.infer<typeof signUpSchema>
+
 export default function SignUp() {
   const navigate = useNavigate()
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [serverError, setServerError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpValues>({
+    resolver: standardSchemaResolver(signUpSchema),
+  })
 
-    const { error } = await authClient.signUp.email(
-      { name, email, password },
-      {
-        onSuccess: () => navigate('/dashboard'),
-        onError: (ctx) => {
-          setError(ctx.error.message ?? 'An error occurred')
-          setLoading(false)
-        },
+  const onSubmit = async (values: SignUpValues) => {
+    setServerError('')
+
+    const { error } = await authClient.signUp.email(values, {
+      onSuccess: () => navigate('/dashboard'),
+      onError: (ctx) => {
+        setServerError(ctx.error.message ?? 'An error occurred')
       },
-    )
+    })
 
     if (error) {
-      setError(error.message ?? 'An error occurred')
-      setLoading(false)
+      setServerError(error.message ?? 'An error occurred')
     }
   }
 
@@ -62,28 +70,16 @@ export default function SignUp() {
             </span>
           </div>
 
-          <form onSubmit={handleSubmit} className="grid gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
             <div className="grid gap-1.5">
               <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="John Doe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
+              <Input id="name" type="text" placeholder="John Doe" {...register('name')} />
+              {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <Input id="email" type="email" placeholder="you@example.com" {...register('email')} />
+              {errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="password">Password</Label>
@@ -91,17 +87,17 @@ export default function SignUp() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
+                {...register('password')}
               />
+              {errors.password && (
+                <p className="text-destructive text-sm">{errors.password.message}</p>
+              )}
             </div>
 
-            {error ? <p className="text-destructive text-sm">{error}</p> : null}
+            {serverError ? <p className="text-destructive text-sm">{serverError}</p> : null}
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating account...' : 'Create account'}
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating account...' : 'Create account'}
             </Button>
           </form>
         </CardContent>

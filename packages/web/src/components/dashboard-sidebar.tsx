@@ -1,4 +1,5 @@
 import { useSidebar } from '@/contexts/sidebar-context'
+import { useCommandMenu } from '@/stores/command-menu-store'
 import { authClient } from '@/lib/auth-client'
 import {
   Avatar,
@@ -8,6 +9,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
@@ -17,6 +20,7 @@ import {
 } from '@curved/ui'
 import {
   ArrowDown01Icon,
+  CheckmarkCircle02Icon,
   Home09Icon,
   Logout03Icon,
   PencilEdit02Icon,
@@ -34,21 +38,28 @@ const navItems = [
   { to: '/settings', label: 'Settings', icon: Settings01Icon },
 ]
 
-export function DashboardSidebar() {
-  const navigate = useNavigate()
-  const { data: session } = authClient.useSession()
-
-  const { effectiveWidth, sidebarWidth, minWidth, isResizing } = useSidebar()
-
-  if (!session) return null
-
-  const user = session.user
-  const initials = user.name
+function getInitials(name: string) {
+  return name
     .split(' ')
     .map((n) => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2)
+}
+
+export function DashboardSidebar() {
+  const navigate = useNavigate()
+  const { data: session } = authClient.useSession()
+  const { data: organizations } = authClient.useListOrganizations()
+  const { data: activeOrg } = authClient.useActiveOrganization()
+
+  const { effectiveWidth, sidebarWidth, minWidth, isResizing } = useSidebar()
+  const openCommandMenu = useCommandMenu((s) => s.open)
+
+  if (!session) return null
+
+  const user = session.user
+  const initials = getInitials(user.name)
 
   const handleSignOut = async () => {
     await authClient.signOut()
@@ -95,8 +106,39 @@ export function DashboardSidebar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>Switch workspace</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent sideOffset={6} className="min-w-40">
-                    <DropdownMenuItem>Personal</DropdownMenuItem>
+                  <DropdownMenuSubContent sideOffset={6} className="min-w-52">
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
+                        {user.email}
+                      </DropdownMenuLabel>
+                      {organizations?.map((org) => (
+                        <DropdownMenuItem
+                          key={org.id}
+                          onClick={() =>
+                            authClient.organization.setActive({
+                              organizationId: org.id,
+                            })
+                          }
+                          className="flex items-center gap-2"
+                        >
+                          <Avatar className="size-5 rounded-md">
+                            {org.logo ? <AvatarImage src={org.logo} alt={org.name} /> : null}
+                            <AvatarFallback className="rounded-md text-[9px]">
+                              {getInitials(org.name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="flex-1">{org.name}</span>
+                          {activeOrg?.id === org.id && (
+                            <HugeiconsIcon
+                              icon={CheckmarkCircle02Icon}
+                              size={14}
+                              strokeWidth={2}
+                              className="text-primary"
+                            />
+                          )}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuGroup>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
                 <DropdownMenuItem onClick={handleSignOut}>
@@ -111,6 +153,7 @@ export function DashboardSidebar() {
                 variant="ghost"
                 size="icon"
                 className="text-sidebar-foreground/60 hover:text-sidebar-foreground size-7"
+                onClick={() => openCommandMenu()}
               >
                 <HugeiconsIcon icon={Search01Icon} size={16} strokeWidth={1.5} />
               </Button>
