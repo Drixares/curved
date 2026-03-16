@@ -6,8 +6,17 @@
   ],
   "scripts": {
     "dev": "bun run --filter '*' dev",
+    "build": "bun run --filter '*' build",
     "checks": "prettier --check .",
     "checks:fix": "prettier --write .",
+    "start": "bun run --filter '@curved/api' start",
+    "db:generate": "bun run --filter '@curved/api' db:generate",
+    "db:migrate": "bun run --filter '@curved/api' db:migrate",
+    "db:push": "bun run --filter '@curved/api' db:push",
+    "db:pull": "bun run --filter '@curved/api' db:pull",
+    "db:studio": "bun run --filter '@curved/api' db:studio",
+    "db:check": "bun run --filter '@curved/api' db:check",
+    "auth:generate": "bun run --filter '@curved/api' auth:generate",
     "prepare": "husky"
   },
   "devDependencies": {
