@@ -1,10 +1,21 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 const MIN_WIDTH = 200
 const MAX_WIDTH = 300
 const DEFAULT_WIDTH = 224
 
-export function useResizableSidebar() {
+interface SidebarContextValue {
+  effectiveWidth: number
+  sidebarWidth: number
+  minWidth: number
+  isResizing: boolean
+  handleMouseDown: (e: React.MouseEvent) => void
+  handleClick: () => void
+}
+
+const SidebarContext = createContext<SidebarContextValue | null>(null)
+
+export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH)
   const [collapsed, setCollapsed] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
@@ -57,12 +68,24 @@ export function useResizableSidebar() {
 
   const effectiveWidth = collapsed ? 0 : sidebarWidth
 
-  return {
-    effectiveWidth,
-    sidebarWidth,
-    minWidth: MIN_WIDTH,
-    isResizing,
-    handleMouseDown,
-    handleClick,
+  return (
+    <SidebarContext value={{
+      effectiveWidth,
+      sidebarWidth,
+      minWidth: MIN_WIDTH,
+      isResizing,
+      handleMouseDown,
+      handleClick,
+    }}>
+      {children}
+    </SidebarContext>
+  )
+}
+
+export function useSidebar() {
+  const context = useContext(SidebarContext)
+  if (!context) {
+    throw new Error('useSidebar must be used within a SidebarProvider')
   }
+  return context
 }

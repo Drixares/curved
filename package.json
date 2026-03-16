@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "bun run --filter '*' dev",
+    "dev": "concurrently --raw --kill-others \"bun run --filter '*' dev\"",
     "build": "bun run --filter '*' build",
     "checks": "prettier --check .",
     "checks:fix": "prettier --write .",
@@ -23,5 +23,8 @@
     "husky": "^9.1.7",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1"
   }
 }
