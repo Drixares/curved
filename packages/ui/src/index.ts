@@ -20,6 +20,7 @@ export {
   AvatarGroupCount,
   AvatarBadge,
 } from './components/ui/avatar'
+export { Label } from './components/ui/label'
 export { Separator } from './components/ui/separator'
 export { Switch } from './components/ui/switch'
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/tabs'

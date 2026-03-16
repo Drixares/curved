@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Button,
   Card,
@@ -36,10 +37,14 @@ function App() {
                 <span className="text-muted-foreground text-sm">Dark</span>
                 <Switch checked={darkMode} onCheckedChange={setDarkMode} size="sm" />
               </div>
-              <Button variant="outline" size="sm">
-                Sign in
-              </Button>
-              <Button size="sm">Get started</Button>
+              <Link to="/sign-in">
+                <Button variant="outline" size="sm">
+                  Sign in
+                </Button>
+              </Link>
+              <Link to="/sign-up">
+                <Button size="sm">Get started</Button>
+              </Link>
             </div>
           </div>
         </header>
@@ -54,7 +59,9 @@ function App() {
             A modern platform with beautiful components. Fast, accessible, and ready to ship.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
-            <Button size="lg">Start building</Button>
+            <Link to="/sign-up">
+              <Button size="lg">Start building</Button>
+            </Link>
             <Button variant="outline" size="lg">
               View docs
             </Button>
