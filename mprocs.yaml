@@ -1,0 +1,13 @@
+procs:
+  api:
+    shell: bun run --watch src/index.ts
+    cwd: packages/api
+  drizzle-studio:
+    shell: bunx drizzle-kit studio
+    cwd: packages/api
+  web:
+    shell: bun run dev
+    cwd: packages/web
+  admin:
+    shell: bun run dev
+    cwd: packages/admin

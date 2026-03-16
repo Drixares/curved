@@ -1,8 +1,9 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useSearchParams } from 'react-router-dom'
 import { authClient } from '@/lib/auth-client'
 
 export default function GuestRoute() {
   const { data: session, isPending } = authClient.useSession()
+  const [searchParams] = useSearchParams()
 
   if (isPending) {
     return (
@@ -13,7 +14,8 @@ export default function GuestRoute() {
   }
 
   if (session) {
-    return <Navigate to="/dashboard" replace />
+    const redirect = searchParams.get('redirect') || '/dashboard'
+    return <Navigate to={redirect} replace />
   }
 
   return <Outlet />

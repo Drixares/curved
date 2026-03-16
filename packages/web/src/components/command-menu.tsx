@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useCommandMenu } from '@/stores/command-menu-store'
 import {
   Command,
   CommandDialog,
@@ -10,15 +9,16 @@ import {
   CommandList,
   CommandSeparator,
 } from '@curved/ui'
-import { HugeiconsIcon } from '@hugeicons/react'
 import {
-  Home09Icon,
-  Task01Icon,
-  Settings01Icon,
   Add01Icon,
   ArrowMoveRightDownIcon,
+  Home09Icon,
+  Settings01Icon,
+  Task01Icon,
 } from '@hugeicons/core-free-icons'
-import { useCommandMenu } from '@/stores/command-menu-store'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const pages = [
   { to: '/dashboard', label: 'Dashboard', icon: Home09Icon },

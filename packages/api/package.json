@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "dev": "bun run --watch src/index.ts & bunx drizzle-kit studio",
+    "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts",
     "db:generate": "bunx drizzle-kit generate",
     "db:migrate": "bunx drizzle-kit migrate",
@@ -14,10 +14,13 @@
     "auth:generate": "bunx @better-auth/cli generate --output ./src/db/schema.ts"
   },
   "dependencies": {
+    "@react-email/components": "^1.0.9",
     "better-auth": "^1",
     "drizzle-orm": "^0.45.1",
     "hono": "^4",
-    "postgres": "^3.4.8"
+    "postgres": "^3.4.8",
+    "react": "^19.2.4",
+    "resend": "^6.9.3"
   },
   "devDependencies": {
     "@types/bun": "latest",

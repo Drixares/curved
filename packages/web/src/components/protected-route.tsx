@@ -15,7 +15,7 @@ export default function ProtectedRoute() {
   }
 
   if (!session) {
-    return <Navigate to="/sign-in" replace />
+    return <Navigate to={`/sign-in?redirect=${encodeURIComponent(location.pathname)}`} replace />
   }
 
   if (

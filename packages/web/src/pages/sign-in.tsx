@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
 import { z } from 'zod'
@@ -27,6 +27,7 @@ type SignInValues = z.infer<typeof signInSchema>
 
 export default function SignIn() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [serverError, setServerError] = useState('')
 
   const {
@@ -45,7 +46,7 @@ export default function SignIn() {
     if (error) {
       setServerError(error.message ?? 'An error occurred')
     } else {
-      navigate('/dashboard')
+      navigate(searchParams.get('redirect') || '/dashboard')
     }
   }
 

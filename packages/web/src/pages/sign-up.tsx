@@ -1,9 +1,12 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
 import { z } from 'zod'
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   Card,
   CardHeader,
@@ -16,6 +19,7 @@ import {
   Separator,
 } from '@curved/ui'
 import { authClient } from '@/lib/auth-client'
+import { useInvitation } from '@/hooks/use-invitation'
 import SocialAuthButtons from '@/components/social-auth-buttons'
 
 const signUpSchema = z.object({
@@ -26,9 +30,23 @@ const signUpSchema = z.object({
 
 type SignUpValues = z.infer<typeof signUpSchema>
 
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
 export default function SignUp() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [serverError, setServerError] = useState('')
+
+  const invitationId = searchParams.get('invitationId')
+  const signUpEmail = searchParams.get('signUpEmail')
+  const { data: invitation } = useInvitation(invitationId ?? undefined)
 
   const {
     register,
@@ -36,13 +54,17 @@ export default function SignUp() {
     formState: { errors, isSubmitting },
   } = useForm<SignUpValues>({
     resolver: standardSchemaResolver(signUpSchema),
+    defaultValues: {
+      email: signUpEmail ?? '',
+    },
   })
 
   const onSubmit = async (values: SignUpValues) => {
     setServerError('')
 
+    const redirectTo = searchParams.get('redirect') || '/dashboard'
     const { error } = await authClient.signUp.email(values, {
-      onSuccess: () => navigate('/dashboard'),
+      onSuccess: () => navigate(redirectTo),
       onError: (ctx) => {
         setServerError(ctx.error.message ?? 'An error occurred')
       },
@@ -57,8 +79,31 @@ export default function SignUp() {
     <div className="bg-background flex min-h-screen items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Create an account</CardTitle>
-          <CardDescription>Get started with Curved</CardDescription>
+          {invitation ? (
+            <>
+              <Avatar className="mx-auto size-12 rounded-lg">
+                {invitation.organization.logo ? (
+                  <AvatarImage
+                    src={invitation.organization.logo}
+                    alt={invitation.organization.name}
+                  />
+                ) : null}
+                <AvatarFallback className="rounded-lg text-lg">
+                  {getInitials(invitation.organization.name)}
+                </AvatarFallback>
+              </Avatar>
+              <CardTitle className="text-2xl">Join {invitation.organization.name}</CardTitle>
+              <CardDescription>
+                <strong>{invitation.inviter.name}</strong> invited you to join. Create an account to
+                get started.
+              </CardDescription>
+            </>
+          ) : (
+            <>
+              <CardTitle className="text-2xl">Create an account</CardTitle>
+              <CardDescription>Get started with Curved</CardDescription>
+            </>
+          )}
         </CardHeader>
         <CardContent>
           <SocialAuthButtons />
@@ -78,7 +123,13 @@ export default function SignUp() {
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="you@example.com" {...register('email')} />
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                disabled={!!signUpEmail}
+                {...register('email')}
+              />
               {errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}
             </div>
             <div className="grid gap-1.5">

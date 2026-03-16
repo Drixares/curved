@@ -1,15 +1,16 @@
 import { useSidebar } from '@/contexts/sidebar-context'
-import { useCommandMenu } from '@/stores/command-menu-store'
 import { authClient } from '@/lib/auth-client'
+import { useCommandMenu } from '@/stores/command-menu-store'
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
@@ -20,13 +21,13 @@ import {
 } from '@curved/ui'
 import {
   ArrowDown01Icon,
-  CheckmarkCircle02Icon,
   Home09Icon,
   Logout03Icon,
+  Mail01Icon,
   PencilEdit02Icon,
   Search01Icon,
-  Settings01Icon,
   Task01Icon,
+  Tick01Icon,
   UserGroupIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -35,7 +36,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: Home09Icon },
   { to: '/tasks', label: 'Tasks', icon: Task01Icon },
-  { to: '/settings', label: 'Settings', icon: Settings01Icon },
+  { to: '/invitations', label: 'Invitations', icon: Mail01Icon },
 ]
 
 function getInitials(name: string) {
@@ -79,14 +80,14 @@ export function DashboardSidebar() {
         style={{ width: sidebarWidth, minWidth }}
       >
         <div>
-          <div className="flex items-center justify-between px-1.5 py-3">
+          <div className="flex items-center justify-between pb-3">
             <DropdownMenu>
-              <DropdownMenuTrigger className="hover:bg-sidebar-accent flex items-center gap-2 rounded-lg px-2.5 py-1 transition-colors outline-none">
-                <Avatar className="size-7">
+              <DropdownMenuTrigger className="hover:bg-sidebar-accent flex min-w-0 items-center gap-1.5 rounded-lg px-2 py-1 transition-colors outline-none">
+                <Avatar className="size-6 shrink-0">
                   {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
                   <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
                 </Avatar>
-                <span className="text-sidebar-foreground text-sm">{user.name}</span>
+                <span className="text-sidebar-foreground truncate text-sm">{user.name}</span>
                 <HugeiconsIcon
                   icon={ArrowDown01Icon}
                   size={14}
@@ -99,7 +100,11 @@ export function DashboardSidebar() {
                   Settings
                   <DropdownMenuShortcut>G then S</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (activeOrg?.id) navigate(`/organizations/${activeOrg.id}/members`)
+                  }}
+                >
                   <HugeiconsIcon icon={UserGroupIcon} size={16} strokeWidth={1.5} />
                   Invite and manage members
                 </DropdownMenuItem>
@@ -130,7 +135,7 @@ export function DashboardSidebar() {
                           <span className="flex-1">{org.name}</span>
                           {activeOrg?.id === org.id && (
                             <HugeiconsIcon
-                              icon={CheckmarkCircle02Icon}
+                              icon={Tick01Icon}
                               size={14}
                               strokeWidth={2}
                               className="text-primary"
@@ -173,11 +178,12 @@ export function DashboardSidebar() {
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg px-3 py-1 text-sm font-medium transition-colors ${
+                  cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-1 text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-                  }`
+                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground',
+                  )
                 }
               >
                 <HugeiconsIcon icon={item.icon} size={18} strokeWidth={1.5} />
@@ -186,8 +192,6 @@ export function DashboardSidebar() {
             ))}
           </nav>
         </div>
-
-        <div />
       </div>
     </aside>
   )

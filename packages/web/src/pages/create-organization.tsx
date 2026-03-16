@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
@@ -19,6 +19,7 @@ import {
 } from '@curved/ui'
 import { authClient } from '@/lib/auth-client'
 import { slugify } from '@/lib/slugify'
+import { useCheckSlug } from '@/hooks/use-check-slug'
 
 const createOrgSchema = z.object({
   name: z.string().min(1, 'Organization name is required'),
@@ -30,14 +31,10 @@ const createOrgSchema = z.object({
 
 type CreateOrgValues = z.infer<typeof createOrgSchema>
 
-type SlugStatus = 'idle' | 'checking' | 'available' | 'taken'
-
 export default function CreateOrganization() {
   const navigate = useNavigate()
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
-  const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle')
   const [serverError, setServerError] = useState('')
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null)
 
   const {
     register,
@@ -51,55 +48,18 @@ export default function CreateOrganization() {
   })
 
   const slug = watch('slug')
-
-  const checkSlugAvailability = useCallback((slugToCheck: string) => {
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-
-    if (!slugToCheck) {
-      setSlugStatus('idle')
-      return
-    }
-
-    setSlugStatus('checking')
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL ?? 'http://localhost:3000'}/api/organization/check-slug`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ slug: slugToCheck }),
-          },
-        )
-        const data = await res.json()
-        setSlugStatus(data.status === 'available' ? 'available' : 'taken')
-      } catch {
-        setSlugStatus('idle')
-      }
-    }, 300)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-    }
-  }, [])
+  const { status: slugStatus, isChecking } = useCheckSlug(slug)
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     if (!slugManuallyEdited) {
-      const newSlug = slugify(value)
-      setValue('slug', newSlug)
-      checkSlugAvailability(newSlug)
+      setValue('slug', slugify(value))
     }
   }
 
   const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSlugManuallyEdited(true)
-    const newSlug = slugify(e.target.value)
-    setValue('slug', newSlug)
-    checkSlugAvailability(newSlug)
+    setValue('slug', slugify(e.target.value))
   }
 
   const onSubmit = async (values: CreateOrgValues) => {
@@ -173,7 +133,7 @@ export default function CreateOrganization() {
             <Button
               type="submit"
               className="w-full"
-              disabled={isSubmitting || slugStatus === 'taken' || slugStatus === 'checking'}
+              disabled={isSubmitting || slugStatus === 'taken' || isChecking}
             >
               {isSubmitting ? 'Creating...' : 'Create workspace'}
             </Button>
