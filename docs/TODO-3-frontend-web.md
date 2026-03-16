@@ -20,20 +20,20 @@
 
 ### Dashboard
 
-- [~] `/dashboard` — page d'accueil connecté (affiche le profil utilisateur, manque la liste des équipes)
+- [~] `/dashboard` — page d'accueil connecté (affiche le profil utilisateur, manque la liste des organisations)
 
 ### Profil
 
 - [ ] `/profile` — consultation du profil
 - [ ] `/profile/edit` — formulaire d'édition du profil
 
-### Équipes
+### Organisations
 
-- [ ] `/teams` — liste des équipes
-- [ ] `/teams/new` — formulaire de création d'une équipe
-- [ ] `/teams/:teamId` — détail d'une équipe (membres + projets)
-- [ ] `/teams/:teamId/members` — gestion des membres
-- [ ] `/teams/:teamId/invite` — formulaire d'invitation
+- [ ] `/organizations` — liste des organisations de l'utilisateur
+- [ ] `/organizations/new` — formulaire de création d'une organisation
+- [ ] `/organizations/:orgId` — détail d'une organisation (membres + projets)
+- [ ] `/organizations/:orgId/members` — gestion des membres
+- [ ] `/organizations/:orgId/invite` — formulaire d'invitation
 
 ### Invitations
 
@@ -41,7 +41,7 @@
 
 ### Projets
 
-- [ ] `/teams/:teamId/projects/new` — formulaire de création d'un projet
+- [ ] `/organizations/:orgId/projects/new` — formulaire de création d'un projet
 - [ ] `/projects/:projectId` — détail d'un projet (vue tâches)
 - [ ] `/projects/:projectId/edit` — formulaire d'édition
 
@@ -72,4 +72,4 @@
 
 - [x] Auth client configuré via `better-auth/react` (`lib/auth-client.ts`) — `authClient.signIn`, `authClient.signUp`, `authClient.useSession`
 - [ ] Configurer un client HTTP (fetch wrapper ou bibliothèque) avec le token JWT
-- [ ] Hooks pour chaque entité : `useTeams()`, `useProjects()`, `useTasks()`, etc.
+- [ ] Hooks pour chaque entité : `useOrganizations()`, `useProjects()`, `useTasks()`, etc. (organisations via `authClient.organization`)

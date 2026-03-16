@@ -11,7 +11,7 @@
     "db:pull": "bunx drizzle-kit pull",
     "db:studio": "bunx drizzle-kit studio",
     "db:check": "bunx drizzle-kit check",
-    "auth:generate": "bunx @better-auth/cli generate"
+    "auth:generate": "bunx @better-auth/cli generate --output ./src/db/schema.ts"
   },
   "dependencies": {
     "better-auth": "^1",

@@ -45,11 +45,7 @@ export default function SocialAuthButtons({ showLastUsed }: { showLastUsed?: boo
 
   return (
     <div className="grid gap-3">
-      <Button
-        variant="outline"
-        className="relative w-full"
-        onClick={() => handleSocial('google')}
-      >
+      <Button variant="outline" className="relative w-full" onClick={() => handleSocial('google')}>
         <GoogleIcon />
         Continue with Google
         {lastMethod === 'google' && (
@@ -58,11 +54,7 @@ export default function SocialAuthButtons({ showLastUsed }: { showLastUsed?: boo
           </Badge>
         )}
       </Button>
-      <Button
-        variant="outline"
-        className="relative w-full"
-        onClick={() => handleSocial('github')}
-      >
+      <Button variant="outline" className="relative w-full" onClick={() => handleSocial('github')}>
         <GitHubIcon />
         Continue with GitHub
         {lastMethod === 'github' && (

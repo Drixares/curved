@@ -1,13 +1,9 @@
+import { Button, Switch, useTheme } from '@curved/ui'
 import { Link } from 'react-router-dom'
-import { Button, Switch } from '@curved/ui'
 
-export default function AppHeader({
-  darkMode,
-  onDarkModeChange,
-}: {
-  darkMode: boolean
-  onDarkModeChange: (value: boolean) => void
-}) {
+export default function AppHeader() {
+  const { theme, setTheme } = useTheme()
+
   return (
     <header className="border-border border-b">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
@@ -17,7 +13,11 @@ export default function AppHeader({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Dark</span>
-            <Switch checked={darkMode} onCheckedChange={onDarkModeChange} size="sm" />
+            <Switch
+              checked={theme === 'dark'}
+              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+              size="sm"
+            />
           </div>
           <Link to="/sign-in">
             <Button variant="outline" size="sm">

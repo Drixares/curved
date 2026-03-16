@@ -16,7 +16,7 @@
 
 - [ ] `/` — dashboard avec statistiques globales :
   - Nombre total d'utilisateurs
-  - Nombre total d'équipes
+  - Nombre total d'organisations
   - Nombre total de projets
   - Nombre total de tâches
 - [ ] Cartes de statistiques avec icônes

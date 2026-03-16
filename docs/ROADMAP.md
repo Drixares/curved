@@ -10,7 +10,7 @@
 - Bibliothèque UI partagée avec 16+ composants (shadcn/Tailwind)
 - Admin : maquette statique du dashboard
 - Pas de routing React Router configuré
-- Aucune route API métier (teams, projects, tasks, assets)
+- Aucune route API métier (projects, tasks, assets)
 - Aucune infrastructure AWS
 
 ---
@@ -19,14 +19,12 @@
 
 Étendre le schéma Drizzle pour couvrir toutes les entités métier.
 
-1. Table `teams` (id, name, createdAt, updatedAt)
-2. Table `team_members` (teamId, userId, role, joinedAt)
-3. Table `invitations` (id, teamId, email, status, invitedBy, createdAt)
-4. Table `projects` (id, teamId, name, description, createdAt, updatedAt)
-5. Table `tasks` (id, projectId, name, description, status, assigneeId, createdAt, updatedAt)
-6. Table `assets` (id, taskId, fileName, fileUrl, fileSize, uploadedBy, createdAt)
-7. Ajouter un champ `role` (user/admin) sur la table `user` existante
-8. Générer et appliquer les migrations
+1. Tables `organization`, `member`, `invitation` — gérées par le plugin `organization()` de better-auth (automatique)
+2. Table `projects` (id, organizationId, name, description, createdAt, updatedAt)
+3. Table `tasks` (id, projectId, name, description, status, assigneeId, createdAt, updatedAt)
+4. Table `assets` (id, taskId, fileName, fileUrl, fileSize, uploadedBy, createdAt)
+5. Ajouter un champ `role` (user/admin) sur la table `user` existante
+6. Générer et appliquer les migrations
 
 ---
 
@@ -34,14 +32,13 @@
 
 Créer toutes les routes REST sur Hono avec middlewares d'auth.
 
-1. **Middleware auth** — vérifier le JWT, extraire l'utilisateur, protéger les routes
+1. **Middleware auth** — vérifier la session via better-auth, extraire l'utilisateur, protéger les routes
 2. **Users** — GET/PATCH `/api/users/me` (profil)
-3. **Teams** — CRUD `/api/teams`, GET `/api/teams/:id/members`
-4. **Invitations** — POST `/api/teams/:id/invitations`, GET `/api/invitations`, PATCH `/api/invitations/:id` (accept/refuse)
-5. **Projects** — CRUD `/api/teams/:id/projects`, GET/PATCH/DELETE `/api/projects/:id`
-6. **Tasks** — CRUD `/api/projects/:id/tasks`, PATCH `/api/tasks/:id/status`, PATCH `/api/tasks/:id/assign`
-7. **Assets** — POST/GET/DELETE `/api/tasks/:id/assets` (upload S3)
-8. **Admin** — GET `/api/admin/stats`, GET `/api/admin/users` (protégé par rôle admin)
+3. **Organisations & Invitations** — gérées nativement par better-auth (`/api/auth/organization/*`)
+4. **Projects** — CRUD `/api/organizations/:orgId/projects`, GET/PATCH/DELETE `/api/projects/:id`
+5. **Tasks** — CRUD `/api/projects/:id/tasks`, PATCH `/api/tasks/:id/status`, PATCH `/api/tasks/:id/assign`
+6. **Assets** — POST/GET/DELETE `/api/tasks/:id/assets` (upload S3)
+7. **Admin** — GET `/api/admin/stats`, GET `/api/admin/users` (protégé par rôle admin)
 
 ---
 
@@ -50,10 +47,10 @@ Créer toutes les routes REST sur Hono avec middlewares d'auth.
 Construire l'interface utilisateur complète avec React Router.
 
 1. **Routing** — configurer React Router (layout auth, layout app, routes protégées)
-2. **Dashboard** — page d'accueil connecté (liste des équipes)
+2. **Dashboard** — page d'accueil connecté (liste des organisations)
 3. **Profil** — consultation et édition du profil utilisateur
-4. **Équipes** — création, liste, détail d'une équipe, gestion des membres
-5. **Invitations** — liste, accepter/refuser
+4. **Organisations** — création, liste, détail d'une organisation, gestion des membres (via better-auth client)
+5. **Invitations** — liste, accepter/refuser (via better-auth client)
 6. **Projets** — création, liste, détail, édition, suppression
 7. **Tâches** — board kanban (todo/in progress/done), création, édition, assignation, suppression
 8. **Assets** — upload de fichiers sur une tâche, consultation, suppression
@@ -65,7 +62,7 @@ Construire l'interface utilisateur complète avec React Router.
 Connecter le dashboard admin à l'API réelle.
 
 1. **Auth admin** — connexion avec vérification du rôle admin
-2. **Dashboard** — statistiques globales (users, teams, projects, tasks)
+2. **Dashboard** — statistiques globales (users, organisations, projects, tasks)
 3. **Utilisateurs** — liste de tous les utilisateurs avec détails
 4. **Routes protégées** — middleware de vérification admin côté client
 

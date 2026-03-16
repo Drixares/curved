@@ -14,22 +14,20 @@
 
 - [ ] Ajouter le champ `role` (`enum: 'user' | 'admin'`, default `'user'`) sur la table `user`
 
-## Nouvelles tables
+## Tables better-auth (plugin organization)
 
-### Teams
+> Les tables `organization`, `member` et `invitation` sont gérées automatiquement par le plugin `organization()` de better-auth.
+> Elles sont générées via `db:push` / `db:generate` — **ne pas les créer manuellement**.
 
-- [ ] `teams` — id (uuid), name (varchar), description (text, nullable), createdAt, updatedAt
-- [ ] `team_members` — id (uuid), teamId (fk → teams), userId (fk → user), role (`enum: 'owner' | 'member'`), joinedAt (timestamp)
-- [ ] Index unique sur (teamId, userId)
+- [x] `organization` — id, name, slug, metadata, createdAt
+- [x] `member` — id, organizationId, userId, role (owner/admin/member), createdAt
+- [x] `invitation` — id, organizationId, email, role, status, invitedBy, expiresAt, createdAt
 
-### Invitations
-
-- [ ] `invitations` — id (uuid), teamId (fk → teams), email (varchar), status (`enum: 'pending' | 'accepted' | 'declined'`), invitedBy (fk → user), createdAt
-- [ ] Index unique sur (teamId, email) quand status = pending
+## Nouvelles tables custom
 
 ### Projects
 
-- [ ] `projects` — id (uuid), teamId (fk → teams), name (varchar), description (text, nullable), createdAt, updatedAt
+- [ ] `projects` — id (uuid), organizationId (fk → organization), name (varchar), description (text, nullable), createdAt, updatedAt
 
 ### Tasks
 
