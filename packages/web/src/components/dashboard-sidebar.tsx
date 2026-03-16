@@ -23,7 +23,6 @@ import {
   ArrowDown01Icon,
   Home09Icon,
   Logout03Icon,
-  Mail01Icon,
   PencilEdit02Icon,
   Search01Icon,
   Task01Icon,
@@ -36,7 +35,6 @@ import { NavLink, useNavigate } from 'react-router-dom'
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: Home09Icon },
   { to: '/tasks', label: 'Tasks', icon: Task01Icon },
-  { to: '/invitations', label: 'Invitations', icon: Mail01Icon },
 ]
 
 function getInitials(name: string) {

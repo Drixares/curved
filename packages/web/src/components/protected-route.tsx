@@ -1,5 +1,5 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { authClient } from '@/lib/auth-client'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 export default function ProtectedRoute() {
   const { data: session, isPending: sessionPending } = authClient.useSession()

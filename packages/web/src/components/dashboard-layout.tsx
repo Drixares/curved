@@ -1,7 +1,7 @@
 import { SidebarProvider, useSidebar } from '@/contexts/sidebar-context'
 import { Outlet } from 'react-router-dom'
-import { DashboardSidebar } from './dashboard-sidebar'
 import { CommandMenu } from './command-menu'
+import { DashboardSidebar } from './dashboard-sidebar'
 
 function DashboardLayoutContent() {
   const { handleMouseDown, handleClick } = useSidebar()
@@ -15,7 +15,7 @@ function DashboardLayoutContent() {
         onMouseDown={handleMouseDown}
         onClick={handleClick}
       >
-        <div className="group-hover:bg-primary/40 h-full max-h-[100%-2rem] w-0.5 rounded-full transition-colors" />
+        <div className="group-hover:bg-primary/40 h-full max-h-[calc(100%-2rem)] w-0.5 rounded-full transition-colors" />
       </div>
 
       <main className="bg-background border-border m-2 ml-0 min-h-0 flex-1 overflow-auto rounded-lg border">

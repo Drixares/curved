@@ -4,10 +4,10 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { lastLoginMethod, organization } from 'better-auth/plugins'
 import { db } from '../db'
 import { InvitationEmail } from '../emails/invitation-email'
+import { getUserOrganizations } from './auth-utils'
 import { resend } from './resend'
 
 export const BASE_URL = 'http://localhost:3000'
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -55,4 +55,29 @@ export const auth = betterAuth({
       },
     }),
   ],
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          const userOrganizations = await getUserOrganizations(session.userId)
+
+          if (userOrganizations.length === 0) {
+            return {
+              data: {
+                ...session,
+                activeOrganizationId: null,
+              },
+            }
+          }
+
+          return {
+            data: {
+              ...session,
+              activeOrganizationId: userOrganizations[0].id,
+            },
+          }
+        },
+      },
+    },
+  },
 })
