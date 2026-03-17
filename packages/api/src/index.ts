@@ -1,14 +1,14 @@
-import { and, eq, isNull, inArray } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { db } from './db'
-import { invitation, organization, team, teamMember, user, issue } from './db/schema'
 import { auth } from './lib/auth'
-import { adminMiddleware } from './middleware/admin'
 import { authMiddleware, type AuthVariables } from './middleware/auth'
+import { adminMiddleware } from './middleware/admin'
 import { orgMemberMiddleware } from './middleware/org-member'
-
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+import { invitationRoutes } from './routes/invitations'
+import { teamRoutes } from './routes/teams'
+import { issueRoutes } from './routes/issues'
+import { myIssueRoutes } from './routes/my-issues'
+import { organizationRoutes } from './routes/organization'
 
 const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -22,242 +22,24 @@ app.use(
 
 app.get('/', (c) => c.json({ message: 'Curved API' }))
 
-// Better-auth routes (before auth middleware)
+// Better-auth routes
 app.on(['POST', 'GET'], '/api/auth/**', (c) => {
   return auth.handler(c.req.raw)
 })
 
-// Public: get invitation details by ID (before auth middleware)
-app.get('/api/invitations/:invitationId', async (c) => {
-  const { invitationId } = c.req.param()
+// Public routes (before auth middleware)
+// Then auth middleware + protected routes
+const routes = app
+  .route('/api/invitations', invitationRoutes)
+  .use('/api/*', authMiddleware)
+  .use('/api/admin/*', adminMiddleware)
+  .use('/api/organizations/:orgId/*', orgMemberMiddleware)
+  .route('/api/teams', teamRoutes)
+  .route('/api/issues', issueRoutes)
+  .route('/api/my-issues', myIssueRoutes)
+  .route('/api/organization', organizationRoutes)
 
-  const inv = await db.query.invitation.findFirst({
-    where: eq(invitation.id, invitationId),
-    with: {
-      organization: {
-        columns: { id: true, name: true, slug: true, logo: true },
-      },
-      user: {
-        columns: { name: true, image: true },
-      },
-    },
-  })
-
-  if (!inv || inv.status !== 'pending') {
-    return c.json({ error: 'Invitation not found or no longer valid' }, 404)
-  }
-
-  return c.json({
-    id: inv.id,
-    email: inv.email,
-    role: inv.role,
-    status: inv.status,
-    expiresAt: inv.expiresAt,
-    organization: inv.organization,
-    inviter: inv.user,
-  })
-})
-
-// Smart redirect: determines where to send the user based on auth state
-app.get('/api/invitations/:invitationId/redirect', async (c) => {
-  const { invitationId } = c.req.param()
-  const acceptPath = `/invitations/accept/${invitationId}`
-
-  const inv = await db.query.invitation.findFirst({
-    where: eq(invitation.id, invitationId),
-    columns: { email: true, status: true },
-  })
-
-  if (!inv || inv.status !== 'pending') {
-    return c.redirect(`${FRONTEND_URL}${acceptPath}`)
-  }
-
-  // Check if user is authenticated
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
-
-  if (session) {
-    return c.redirect(`${FRONTEND_URL}${acceptPath}`)
-  }
-
-  // Not authenticated — check if the invited email already has an account
-  const existingUser = await db.query.user.findFirst({
-    where: eq(user.email, inv.email),
-    columns: { id: true },
-  })
-
-  if (existingUser) {
-    // Existing user → sign in first
-    return c.redirect(`${FRONTEND_URL}/sign-in?redirect=${encodeURIComponent(acceptPath)}`)
-  }
-
-  // New user → sign up with invitation context
-  const params = new URLSearchParams({
-    invitationId,
-    signUpEmail: inv.email,
-    redirect: acceptPath,
-  })
-  return c.redirect(`${FRONTEND_URL}/sign-up?${params.toString()}`)
-})
-
-// Auth middleware for all /api/* routes (except /api/auth/**)
-app.use('/api/*', authMiddleware)
-
-// Admin middleware
-app.use('/api/admin/*', adminMiddleware)
-
-// Org member middleware
-app.use('/api/organizations/:orgId/*', orgMemberMiddleware)
-
-// List teams for the active organization
-app.get('/api/teams', async (c) => {
-  const session = c.get('session')
-  const orgId = session.activeOrganizationId
-
-  if (!orgId) {
-    return c.json({ error: 'No active organization' }, 400)
-  }
-
-  const teams = await db.query.team.findMany({
-    where: eq(team.organizationId, orgId),
-    columns: {
-      id: true,
-      name: true,
-      slug: true,
-      identifier: true,
-      icon: true,
-    },
-    orderBy: (team, { asc }) => [asc(team.name)],
-  })
-
-  return c.json(teams)
-})
-
-// Create a team
-app.post('/api/teams', async (c) => {
-  const session = c.get('session')
-  const userId = c.get('user').id
-  const orgId = session.activeOrganizationId
-
-  if (!orgId) {
-    return c.json({ error: 'No active organization' }, 400)
-  }
-
-  const { name, identifier, slug } = await c.req.json<{
-    name: string
-    identifier: string
-    slug: string
-  }>()
-
-  if (!name || !identifier || !slug) {
-    return c.json({ error: 'Name, identifier, and slug are required' }, 400)
-  }
-
-  // Check identifier uniqueness within the org
-  const existing = await db.query.team.findFirst({
-    where: and(eq(team.organizationId, orgId), eq(team.identifier, identifier)),
-    columns: { id: true },
-  })
-
-  if (existing) {
-    return c.json({ error: 'A team with this identifier already exists' }, 409)
-  }
-
-  const id = crypto.randomUUID()
-
-  await db.insert(team).values({
-    id,
-    name: name.trim(),
-    identifier: identifier.toUpperCase(),
-    slug,
-    organizationId: orgId,
-  })
-
-  // Add creator as team owner
-  await db.insert(teamMember).values({
-    id: crypto.randomUUID(),
-    teamId: id,
-    userId,
-    role: 'owner',
-  })
-
-  return c.json({ id, name, identifier, slug }, 201)
-})
-
-// Check slug availability
-app.post('/api/organization/check-slug', async (c) => {
-  const { slug } = await c.req.json<{ slug: string }>()
-  if (!slug) {
-    return c.json({ error: 'Slug is required' }, 400)
-  }
-
-  const existing = await db.query.organization.findFirst({
-    where: eq(organization.slug, slug),
-    columns: { id: true },
-  })
-
-  return c.json({ status: existing ? 'taken' : 'available' })
-})
-
-// Get issues assigned to the current user (across all teams in the active org)
-app.get('/api/my-issues/assigned', async (c) => {
-  const session = c.get('session')
-  const userId = c.get('user').id
-  const orgId = session.activeOrganizationId
-
-  if (!orgId) {
-    return c.json({ error: 'No active organization' }, 400)
-  }
-
-  // Get all team IDs for the active org
-  const orgTeams = await db.query.team.findMany({
-    where: eq(team.organizationId, orgId),
-    columns: { id: true },
-  })
-  const teamIds = orgTeams.map((t) => t.id)
-
-  if (teamIds.length === 0) {
-    return c.json([])
-  }
-
-  const issues = await db.query.issue.findMany({
-    where: and(
-      eq(issue.assigneeId, userId),
-      inArray(issue.teamId, teamIds),
-      isNull(issue.deletedAt),
-    ),
-    with: {
-      status: {
-        columns: { id: true, name: true, color: true, type: true },
-      },
-      team: {
-        columns: { id: true, identifier: true },
-      },
-      labels: {
-        with: {
-          label: {
-            columns: { id: true, name: true, color: true },
-          },
-        },
-      },
-    },
-    orderBy: (issue, { desc }) => [desc(issue.createdAt)],
-  })
-
-  // Flatten the issueLabel join
-  const result = issues.map((i) => ({
-    id: i.id,
-    number: i.number,
-    title: i.title,
-    priority: i.priority,
-    status: i.status,
-    team: i.team,
-    labels: i.labels.map((il) => il.label),
-    createdAt: i.createdAt,
-    updatedAt: i.updatedAt,
-  }))
-
-  return c.json(result)
-})
+export type AppType = typeof routes
 
 export default {
   port: 3000,

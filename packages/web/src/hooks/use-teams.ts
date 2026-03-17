@@ -1,20 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
+import { api } from '@/lib/api-client'
 import { authClient } from '@/lib/auth-client'
+import { useQuery } from '@tanstack/react-query'
+import type { InferResponseType } from 'hono/client'
 
-export interface Team {
-  id: string
-  name: string
-  slug: string
-  identifier: string
-  icon: string | null
-}
+type TeamsResponse = InferResponseType<typeof api.api.teams.$get, 200>
+export type Team = TeamsResponse[number]
 
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
-
-async function fetchTeams(): Promise<Team[]> {
-  const res = await fetch(`${API_URL}/api/teams`, {
-    credentials: 'include',
-  })
+async function fetchTeams() {
+  const res = await api.api.teams.$get()
   if (!res.ok) {
     throw new Error('Failed to fetch teams')
   }

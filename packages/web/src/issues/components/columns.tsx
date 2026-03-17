@@ -1,12 +1,12 @@
 import { HugeiconsIcon } from '@hugeicons/react'
 import { type ColumnDef } from '@tanstack/react-table'
+import { Link } from 'react-router-dom'
 
 import { Badge, Checkbox } from '@curved/ui'
 
 import { priorities, statusTypeIcons } from '../data/data'
 import { type Issue } from '../data/schema'
 import { DataTableColumnHeader } from './data-table-column-header'
-import { DataTableRowActions } from './data-table-row-actions'
 
 export const columns: ColumnDef<Issue>[] = [
   {
@@ -35,9 +35,12 @@ export const columns: ColumnDef<Issue>[] = [
     id: 'identifier',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Issue" />,
     cell: ({ row }) => (
-      <div className="text-muted-foreground w-[80px]">
+      <Link
+        to={`/issue/${row.original.id}`}
+        className="text-muted-foreground hover:text-foreground w-[80px]"
+      >
         {row.original.team.identifier}-{row.original.number}
-      </div>
+      </Link>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -53,7 +56,12 @@ export const columns: ColumnDef<Issue>[] = [
               {label.name}
             </Badge>
           ))}
-          <span className="max-w-[500px] truncate font-medium">{row.getValue('title')}</span>
+          <Link
+            to={`/issue/${row.original.id}`}
+            className="hover:text-foreground max-w-[500px] truncate font-medium"
+          >
+            {row.getValue('title')}
+          </Link>
         </div>
       )
     },
@@ -105,9 +113,5 @@ export const columns: ColumnDef<Issue>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ]

@@ -1,6 +1,7 @@
 import { SidebarProvider, useSidebar } from '@/contexts/sidebar-context'
 import { Outlet } from 'react-router-dom'
 import { CommandMenu } from './command-menu'
+import { CreateIssueDialog } from './create-issue-dialog'
 import { DashboardSidebar } from './dashboard-sidebar'
 
 function DashboardLayoutContent() {
@@ -23,6 +24,7 @@ function DashboardLayoutContent() {
       </main>
 
       <CommandMenu />
+      <CreateIssueDialog />
     </div>
   )
 }

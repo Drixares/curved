@@ -2,6 +2,7 @@ import { useSidebar } from '@/contexts/sidebar-context'
 import { useTeams, type Team } from '@/hooks/use-teams'
 import { authClient } from '@/lib/auth-client'
 import { useCommandMenu } from '@/stores/command-menu-store'
+import { useCreateIssue } from '@/stores/create-issue-store'
 import {
   Avatar,
   AvatarFallback,
@@ -209,6 +210,7 @@ export function DashboardSidebar() {
 
   const { effectiveWidth, sidebarWidth, minWidth, isResizing } = useSidebar()
   const openCommandMenu = useCommandMenu((s) => s.open)
+  const openCreateIssue = useCreateIssue((s) => s.open)
 
   if (!session) return null
 
@@ -222,7 +224,7 @@ export function DashboardSidebar() {
 
   return (
     <aside
-      className="shrink-0 overflow-x-hidden overflow-y-auto"
+      className="shrink-0 overflow-x-hidden overflow-y-auto pt-1.5"
       style={{
         width: effectiveWidth,
         transition: isResizing ? 'none' : 'width 200ms ease',
@@ -315,6 +317,7 @@ export function DashboardSidebar() {
                 variant="outline"
                 size="icon"
                 className="text-sidebar-foreground/60 hover:text-sidebar-foreground size-7"
+                onClick={() => openCreateIssue()}
               >
                 <HugeiconsIcon icon={PencilEdit02Icon} size={16} strokeWidth={1.5} />
               </Button>

@@ -7,6 +7,7 @@ import { queryClient } from './lib/query-client'
 import ProtectedRoute from './components/protected-route'
 import GuestRoute from './components/guest-route'
 import App from './App'
+import { Toaster } from 'sonner'
 import './index.css'
 
 const SignIn = lazy(() => import('./pages/sign-in'))
@@ -20,6 +21,7 @@ const CreateTeam = lazy(() => import('./pages/create-team'))
 const OrganizationDetail = lazy(() => import('./pages/organization-detail'))
 const OrganizationMembers = lazy(() => import('./pages/organization-members'))
 const InvitationAccept = lazy(() => import('./pages/invitation-accept'))
+const IssueDetail = lazy(() => import('./pages/issue-detail'))
 
 function Loading() {
   return (
@@ -34,6 +36,7 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <BrowserRouter>
+          <Toaster position="bottom-right" />
           <Suspense fallback={<Loading />}>
             <Routes>
               <Route path="/" element={<App />} />
@@ -47,6 +50,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route element={<DashboardLayout />}>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/my-issues/assigned" element={<Issues />} />
+                  <Route path="/issue/:issueId" element={<IssueDetail />} />
                   <Route path="/teams/create" element={<CreateTeam />} />
                 </Route>
                 <Route element={<SettingsLayout />}>

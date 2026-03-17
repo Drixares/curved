@@ -14,10 +14,9 @@ import {
   Label,
 } from '@curved/ui'
 import { slugify } from '@/lib/slugify'
+import { api } from '@/lib/api-client'
 import { useQueryClient } from '@tanstack/react-query'
 import { authClient } from '@/lib/auth-client'
-
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
 const createTeamSchema = z.object({
   name: z.string().min(1, 'Team name is required'),
@@ -64,20 +63,17 @@ export default function CreateTeam() {
   const onSubmit = async (values: CreateTeamValues) => {
     setServerError('')
 
-    const res = await fetch(`${API_URL}/api/teams`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
+    const res = await api.api.teams.$post({
+      json: {
         name: values.name.trim(),
         identifier: values.identifier,
         slug: slugify(values.name),
-      }),
+      },
     })
 
     if (!res.ok) {
       const data = await res.json()
-      setServerError(data.error ?? 'Failed to create team')
+      setServerError(('error' in data && data.error) || 'Failed to create team')
       return
     }
 

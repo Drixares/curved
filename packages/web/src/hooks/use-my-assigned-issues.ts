@@ -1,37 +1,14 @@
-import { useQuery } from '@tanstack/react-query'
+import { api } from '@/lib/api-client'
 import { authClient } from '@/lib/auth-client'
+import { useQuery } from '@tanstack/react-query'
+import type { InferResponseType } from 'hono/client'
 
-export interface IssueStatus {
-  id: string
-  name: string
-  color: string
-  type: string // backlog | unstarted | started | completed | cancelled
-}
+const $getAssigned = api.api['my-issues'].assigned.$get
+type AssignedIssuesResponse = InferResponseType<typeof $getAssigned, 200>
+export type AssignedIssue = AssignedIssuesResponse extends Array<infer T> ? T : never
 
-export interface IssueLabel {
-  id: string
-  name: string
-  color: string
-}
-
-export interface AssignedIssue {
-  id: string
-  number: number
-  title: string
-  priority: string
-  status: IssueStatus
-  team: { id: string; identifier: string }
-  labels: IssueLabel[]
-  createdAt: string
-  updatedAt: string
-}
-
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
-
-async function fetchMyAssignedIssues(): Promise<AssignedIssue[]> {
-  const res = await fetch(`${API_URL}/api/my-issues/assigned`, {
-    credentials: 'include',
-  })
+async function fetchMyAssignedIssues() {
+  const res = await api.api['my-issues'].assigned.$get()
   if (!res.ok) {
     throw new Error('Failed to fetch assigned issues')
   }

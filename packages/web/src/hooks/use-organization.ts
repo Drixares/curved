@@ -1,11 +1,11 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { authClient } from '@/lib/auth-client'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export type OrgData = NonNullable<
   Awaited<ReturnType<typeof authClient.organization.getFullOrganization>>['data']
 >
 
-async function fetchOrganization(): Promise<OrgData> {
+async function fetchOrganization() {
   const { data, error } = await authClient.organization.getFullOrganization()
   if (error || !data) {
     throw new Error('Failed to load organization')

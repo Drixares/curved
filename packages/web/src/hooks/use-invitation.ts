@@ -1,19 +1,14 @@
+import { api } from '@/lib/api-client'
 import { useQuery } from '@tanstack/react-query'
+import type { InferResponseType } from 'hono/client'
 
-interface InvitationDetails {
-  id: string
-  email: string
-  role: string | null
-  status: string
-  expiresAt: string
-  organization: { id: string; name: string; slug: string; logo: string | null }
-  inviter: { name: string; image: string | null }
-}
+const $getInvitation = api.api.invitations[':invitationId'].$get
+export type InvitationDetails = InferResponseType<typeof $getInvitation, 200>
 
-async function fetchInvitation(invitationId: string): Promise<InvitationDetails> {
-  const res = await fetch(
-    `${import.meta.env.VITE_API_URL ?? 'http://localhost:3000'}/api/invitations/${invitationId}`,
-  )
+async function fetchInvitation(invitationId: string) {
+  const res = await api.api.invitations[':invitationId'].$get({
+    param: { invitationId },
+  })
   if (!res.ok) {
     throw new Error('This invitation is no longer valid or has expired.')
   }

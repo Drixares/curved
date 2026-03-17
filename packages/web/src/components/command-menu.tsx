@@ -1,4 +1,5 @@
 import { useCommandMenu } from '@/stores/command-menu-store'
+import { useCreateIssue } from '@/stores/create-issue-store'
 import {
   Command,
   CommandDialog,
@@ -35,6 +36,7 @@ const actions = [
 export function CommandMenu() {
   const navigate = useNavigate()
   const { isOpen, close, toggle } = useCommandMenu()
+  const openCreateIssue = useCreateIssue((s) => s.open)
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -53,8 +55,10 @@ export function CommandMenu() {
     close()
   }
 
-  function handleAction(_id: string) {
-    // TODO: implement actions
+  function handleAction(id: string) {
+    if (id === 'create-issue') {
+      openCreateIssue()
+    }
     close()
   }
 

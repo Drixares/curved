@@ -1,16 +1,14 @@
-import { useEffect, useState } from 'react'
+import { api } from '@/lib/api-client'
 import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 
-async function checkSlug(slug: string): Promise<'available' | 'taken'> {
-  const res = await fetch(
-    `${import.meta.env.VITE_API_URL ?? 'http://localhost:3000'}/api/organization/check-slug`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ slug }),
-    },
-  )
+async function checkSlug(slug: string) {
+  const res = await api.api.organization['check-slug'].$post({
+    json: { slug },
+  })
+  if (!res.ok) {
+    throw new Error('Failed to check slug')
+  }
   const data = await res.json()
   return data.status === 'available' ? 'available' : 'taken'
 }
