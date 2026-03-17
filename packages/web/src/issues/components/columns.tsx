@@ -1,25 +1,14 @@
 import { HugeiconsIcon } from '@hugeicons/react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { Link } from 'react-router-dom'
 
 import { Badge, Checkbox } from '@curved/ui'
 
 import { priorities, statusTypeIcons } from '../data/data'
 import { type Issue } from '../data/schema'
-import { DataTableColumnHeader } from './data-table-column-header'
 
 export const columns: ColumnDef<Issue>[] = [
   {
     id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        indeterminate={table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-0.5"
-      />
-    ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -33,21 +22,16 @@ export const columns: ColumnDef<Issue>[] = [
   },
   {
     id: 'identifier',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Issue" />,
     cell: ({ row }) => (
-      <Link
-        to={`/issue/${row.original.id}`}
-        className="text-muted-foreground hover:text-foreground w-[80px]"
-      >
+      <span className="text-muted-foreground hover:text-foreground w-[80px]">
         {row.original.team.identifier}-{row.original.number}
-      </Link>
+      </span>
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
     accessorKey: 'title',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -56,12 +40,9 @@ export const columns: ColumnDef<Issue>[] = [
               {label.name}
             </Badge>
           ))}
-          <Link
-            to={`/issue/${row.original.id}`}
-            className="hover:text-foreground max-w-[500px] truncate font-medium"
-          >
+          <span className="hover:text-foreground max-w-[500px] truncate font-medium">
             {row.getValue('title')}
-          </Link>
+          </span>
         </div>
       )
     },
@@ -69,7 +50,6 @@ export const columns: ColumnDef<Issue>[] = [
   {
     id: 'status',
     accessorFn: (row) => row.status.type,
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const status = row.original.status
       const icon = statusTypeIcons[status.type]
@@ -89,7 +69,6 @@ export const columns: ColumnDef<Issue>[] = [
   },
   {
     accessorKey: 'priority',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Priority" />,
     cell: ({ row }) => {
       const priority = priorities.find((p) => p.value === row.getValue('priority'))
 

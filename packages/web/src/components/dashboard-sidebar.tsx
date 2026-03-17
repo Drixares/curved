@@ -182,7 +182,7 @@ function TeamsSection() {
             <HugeiconsIcon icon={Add01Icon} size={14} strokeWidth={2} />
           </DropdownMenuTrigger>
           <DropdownMenuContent side="right" align="start" sideOffset={4} className="w-48">
-            <DropdownMenuItem onClick={() => navigate('/teams/create')}>
+            <DropdownMenuItem onClick={() => navigate('/settings/teams/new')}>
               Create team
             </DropdownMenuItem>
           </DropdownMenuContent>

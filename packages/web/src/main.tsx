@@ -51,11 +51,11 @@ createRoot(document.getElementById('root')!).render(
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/my-issues/assigned" element={<Issues />} />
                   <Route path="/issue/:issueId" element={<IssueDetail />} />
-                  <Route path="/teams/create" element={<CreateTeam />} />
                 </Route>
                 <Route element={<SettingsLayout />}>
                   <Route path="/settings" element={<OrganizationDetail />} />
                   <Route path="/settings/members" element={<OrganizationMembers />} />
+                  <Route path="/settings/teams/new" element={<CreateTeam />} />
                 </Route>
               </Route>
             </Routes>

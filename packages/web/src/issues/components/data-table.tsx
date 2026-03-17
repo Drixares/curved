@@ -74,7 +74,11 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className={onRowClick ? 'cursor-pointer' : undefined}
-                  onClick={() => onRowClick?.(row.original)}
+                  onClick={(e) => {
+                    const target = e.target as HTMLElement
+                    if (target.closest('a, button, input, [role="checkbox"]')) return
+                    onRowClick?.(row.original)
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

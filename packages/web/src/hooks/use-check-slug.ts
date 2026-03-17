@@ -35,11 +35,7 @@ export function useCheckSlug(slug: string) {
   const isDebouncing = slug !== debouncedSlug && !!slug
 
   return {
-    status: !slug
-      ? ('idle' as const)
-      : isDebouncing || query.isFetching
-        ? ('checking' as const)
-        : (query.data ?? ('idle' as const)),
+    status: !slug ? 'idle' : isDebouncing || query.isFetching ? 'checking' : (query.data ?? 'idle'),
     isChecking: isDebouncing || query.isFetching,
   }
 }
