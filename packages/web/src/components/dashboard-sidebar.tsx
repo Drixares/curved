@@ -46,7 +46,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: Home09Icon },
-  { to: '/issues', label: 'My issues', icon: Task01Icon },
+  { to: '/my-issues/assigned', label: 'My issues', icon: Task01Icon },
 ]
 
 function getInitials(name: string) {

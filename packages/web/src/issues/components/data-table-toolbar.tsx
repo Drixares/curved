@@ -4,9 +4,15 @@ import { Cancel01Icon } from '@hugeicons/core-free-icons'
 
 import { Button, Input } from '@curved/ui'
 
-import { priorities, statuses } from '../data/data'
+import { priorities, statusTypeIcons } from '../data/data'
 import { DataTableFacetedFilter } from './data-table-faceted-filter'
 import { DataTableViewOptions } from './data-table-view-options'
+
+const statusTypes = Object.entries(statusTypeIcons).map(([value, icon]) => ({
+  label: value.charAt(0).toUpperCase() + value.slice(1),
+  value,
+  icon,
+}))
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -28,7 +34,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
           <DataTableFacetedFilter
             column={table.getColumn('status')}
             title="Status"
-            options={statuses}
+            options={statusTypes}
           />
         )}
         {table.getColumn('priority') && (

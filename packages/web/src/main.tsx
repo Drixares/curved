@@ -46,7 +46,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="/create-organization" element={<CreateOrganization />} />
                 <Route element={<DashboardLayout />}>
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/issues" element={<Issues />} />
+                  <Route path="/my-issues/assigned" element={<Issues />} />
                   <Route path="/teams/create" element={<CreateTeam />} />
                 </Route>
                 <Route element={<SettingsLayout />}>
