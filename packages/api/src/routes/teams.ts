@@ -1,8 +1,8 @@
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { validator } from 'hono/validator'
 import { db } from '../db'
-import { label, status, team, teamMember } from '../db/schema'
+import { issue, label, status, team, teamMember } from '../db/schema'
 import type { AuthVariables } from '../middleware/auth'
 
 export const teamRoutes = new Hono<{ Variables: AuthVariables }>()
@@ -141,4 +141,57 @@ export const teamRoutes = new Hono<{ Variables: AuthVariables }>()
     })
 
     return c.json(members.map((m) => m.user))
+  })
+  .get('/:teamId/issues', async (c) => {
+    const session = c.get('session')
+    const orgId = session.activeOrganizationId
+    const { teamId } = c.req.param()
+
+    if (!orgId) {
+      return c.json({ error: 'No active organization' }, 400)
+    }
+
+    // Verify the team belongs to the active org
+    const foundTeam = await db.query.team.findFirst({
+      where: and(eq(team.id, teamId), eq(team.organizationId, orgId)),
+      columns: { id: true, identifier: true },
+    })
+
+    if (!foundTeam) {
+      return c.json({ error: 'Team not found' }, 404)
+    }
+
+    const issues = await db.query.issue.findMany({
+      where: and(eq(issue.teamId, teamId), isNull(issue.deletedAt)),
+      with: {
+        status: {
+          columns: { id: true, name: true, color: true, type: true },
+        },
+        team: {
+          columns: { id: true, identifier: true },
+        },
+        labels: {
+          with: {
+            label: {
+              columns: { id: true, name: true, color: true },
+            },
+          },
+        },
+      },
+      orderBy: (issue, { desc }) => [desc(issue.createdAt)],
+    })
+
+    const result = issues.map((i) => ({
+      id: i.id,
+      number: i.number,
+      title: i.title,
+      priority: i.priority,
+      status: i.status,
+      team: i.team,
+      labels: i.labels.map((il) => il.label),
+      createdAt: i.createdAt,
+      updatedAt: i.updatedAt,
+    }))
+
+    return c.json(result)
   })

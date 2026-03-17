@@ -20,8 +20,14 @@ const CreateOrganization = lazy(() => import('./pages/create-organization'))
 const CreateTeam = lazy(() => import('./pages/create-team'))
 const OrganizationDetail = lazy(() => import('./pages/organization-detail'))
 const OrganizationMembers = lazy(() => import('./pages/organization-members'))
+const ProfileSettings = lazy(() => import('./pages/profile-settings'))
+const SecuritySettings = lazy(() => import('./pages/security-settings'))
 const InvitationAccept = lazy(() => import('./pages/invitation-accept'))
 const IssueDetail = lazy(() => import('./pages/issue-detail'))
+const TeamIssues = lazy(() => import('./pages/team-issues'))
+const TeamProjects = lazy(() => import('./pages/team-projects'))
+const TeamViews = lazy(() => import('./pages/team-views'))
+const TeamSettings = lazy(() => import('./pages/team-settings'))
 
 function Loading() {
   return (
@@ -51,11 +57,17 @@ createRoot(document.getElementById('root')!).render(
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/my-issues/assigned" element={<Issues />} />
                   <Route path="/issue/:issueId" element={<IssueDetail />} />
+                  <Route path="/team/:teamIdentifier/issues" element={<TeamIssues />} />
+                  <Route path="/team/:teamIdentifier/projects" element={<TeamProjects />} />
+                  <Route path="/team/:teamIdentifier/views" element={<TeamViews />} />
+                  <Route path="/team/:teamIdentifier/settings" element={<TeamSettings />} />
                 </Route>
                 <Route element={<SettingsLayout />}>
                   <Route path="/settings" element={<OrganizationDetail />} />
                   <Route path="/settings/members" element={<OrganizationMembers />} />
                   <Route path="/settings/teams/new" element={<CreateTeam />} />
+                  <Route path="/settings/profile" element={<ProfileSettings />} />
+                  <Route path="/settings/security" element={<SecuritySettings />} />
                 </Route>
               </Route>
             </Routes>

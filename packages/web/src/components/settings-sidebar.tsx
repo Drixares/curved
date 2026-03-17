@@ -1,11 +1,19 @@
 import { useSidebar } from '@/contexts/sidebar-context'
 import { Button, cn } from '@curved/ui'
-import { ArrowLeft01Icon, Settings01Icon, UserGroupIcon } from '@hugeicons/core-free-icons'
+import {
+  ArrowLeft01Icon,
+  SecurityLockIcon,
+  Settings01Icon,
+  UserGroupIcon,
+  UserIcon,
+} from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 const settingsNavItems = [
   { to: '/settings', label: 'General', icon: Settings01Icon, end: true },
+  { to: '/settings/profile', label: 'Profile', icon: UserIcon },
+  { to: '/settings/security', label: 'Security & access', icon: SecurityLockIcon },
   { to: '/settings/members', label: 'Members', icon: UserGroupIcon },
 ]
 
@@ -15,7 +23,7 @@ export function SettingsSidebar() {
 
   return (
     <aside
-      className="shrink-0 overflow-x-hidden overflow-y-auto"
+      className="shrink-0 overflow-x-hidden overflow-y-auto pt-1.5"
       style={{
         width: effectiveWidth,
         transition: isResizing ? 'none' : 'width 200ms ease',
@@ -30,7 +38,7 @@ export function SettingsSidebar() {
             onClick={() => navigate('/dashboard')}
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} strokeWidth={2} />
-            Back
+            Back to app
           </Button>
         </div>
 

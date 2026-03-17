@@ -169,24 +169,14 @@ function TeamsSection() {
             className={cn('transition-transform duration-200', !teamsOpen && '-rotate-90')}
           />
         </CollapsibleTrigger>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-sidebar-foreground/40 hover:text-sidebar-foreground size-5"
-              />
-            }
-          >
-            <HugeiconsIcon icon={Add01Icon} size={14} strokeWidth={2} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="start" sideOffset={4} className="w-48">
-            <DropdownMenuItem onClick={() => navigate('/settings/teams/new')}>
-              Create team
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-sidebar-foreground/40 hover:text-sidebar-foreground size-5"
+          onClick={() => navigate('/settings/teams/new')}
+        >
+          <HugeiconsIcon icon={Add01Icon} size={14} strokeWidth={2} />
+        </Button>
       </div>
       <CollapsibleContent>
         <div className="mt-1 flex flex-col gap-2">

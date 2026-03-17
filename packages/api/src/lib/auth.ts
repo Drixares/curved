@@ -1,6 +1,7 @@
 import { render } from '@react-email/components'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { passkey } from '@better-auth/passkey'
 import { lastLoginMethod, organization } from 'better-auth/plugins'
 import { db } from '../db'
 import { InvitationEmail } from '../emails/invitation-email'
@@ -30,6 +31,7 @@ export const auth = betterAuth({
   },
   plugins: [
     lastLoginMethod(),
+    passkey(),
     organization({
       async sendInvitationEmail(data) {
         const acceptUrl = `${BASE_URL}/api/invitations/${data.id}/redirect`

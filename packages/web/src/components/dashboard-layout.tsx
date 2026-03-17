@@ -1,6 +1,7 @@
 import { SidebarProvider, useSidebar } from '@/contexts/sidebar-context'
 import { Outlet } from 'react-router-dom'
 import { CommandMenu } from './command-menu'
+import { ContentHeader } from './content-header'
 import { CreateIssueDialog } from './create-issue-dialog'
 import { DashboardSidebar } from './dashboard-sidebar'
 
@@ -19,8 +20,11 @@ function DashboardLayoutContent() {
         <div className="group-hover:bg-primary/40 h-full max-h-[calc(100%-2rem)] w-0.5 rounded-full transition-colors" />
       </div>
 
-      <main className="bg-background border-border m-2 ml-0 min-h-0 flex-1 overflow-auto rounded-lg border">
-        <Outlet />
+      <main className="bg-background border-border m-2 ml-0 flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border">
+        <ContentHeader />
+        <div className="min-h-0 flex-1 overflow-auto">
+          <Outlet />
+        </div>
       </main>
 
       <CommandMenu />
