@@ -8,14 +8,19 @@ import { InvitationEmail } from '../emails/invitation-email'
 import { getUserOrganizations } from './auth-utils'
 import { resend } from './resend'
 
-export const BASE_URL = 'http://localhost:3000'
+const DEFAULT_ORIGINS = ['http://localhost:5173', 'http://localhost:5174']
+
+export const BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
+const trustedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',')
+  : DEFAULT_ORIGINS
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
   }),
   baseURL: BASE_URL,
-  trustedOrigins: ['http://localhost:5173', 'http://localhost:5174'],
+  trustedOrigins,
   emailAndPassword: {
     enabled: true,
   },

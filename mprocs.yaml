@@ -3,7 +3,7 @@ procs:
     shell: bun run --watch src/index.ts
     cwd: packages/api
   drizzle-studio:
-    shell: bunx drizzle-kit studio
+    shell: bunx drizzle-kit studio --host 0.0.0.0
     cwd: packages/api
   web:
     shell: bun run dev

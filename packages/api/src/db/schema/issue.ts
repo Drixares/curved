@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp, integer, real, index, uniqueIndex } from 'drizzle-orm/pg-core'
 import { user } from './auth'
 import { team } from './team'
@@ -61,3 +62,40 @@ export const issueLabel = pgTable(
     uniqueIndex('issueLabel_issue_label_uidx').on(table.issueId, table.labelId),
   ],
 )
+
+export const issueRelations = relations(issue, ({ one, many }) => ({
+  team: one(team, {
+    fields: [issue.teamId],
+    references: [team.id],
+  }),
+  project: one(project, {
+    fields: [issue.projectId],
+    references: [project.id],
+  }),
+  status: one(status, {
+    fields: [issue.statusId],
+    references: [status.id],
+  }),
+  assignee: one(user, {
+    fields: [issue.assigneeId],
+    references: [user.id],
+    relationName: 'assignedIssues',
+  }),
+  creator: one(user, {
+    fields: [issue.creatorId],
+    references: [user.id],
+    relationName: 'createdIssues',
+  }),
+  labels: many(issueLabel),
+}))
+
+export const issueLabelRelations = relations(issueLabel, ({ one }) => ({
+  issue: one(issue, {
+    fields: [issueLabel.issueId],
+    references: [issue.id],
+  }),
+  label: one(label, {
+    fields: [issueLabel.labelId],
+    references: [label.id],
+  }),
+}))

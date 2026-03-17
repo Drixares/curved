@@ -65,8 +65,13 @@
 
 ## Routes Admin
 
-- [ ] `GET /admin/stats` — statistiques globales (count users, teams, projects, tasks)
-- [ ] `GET /admin/users` — lister tous les utilisateurs (pagination)
+> Auth admin séparée de better-auth : table `admin_user` + JWT custom.
+> Routes dans `packages/api/src/routes/admin.ts`.
+
+- [x] `POST /admin/login` — connexion admin (email + password → JWT)
+- [x] `GET /admin/me` — profil admin (vérifié via JWT)
+- [x] `GET /admin/stats` — statistiques globales (count users, orgs, teams, projects, issues)
+- [x] `GET /admin/users` — lister tous les utilisateurs (pagination)
 - [ ] `GET /admin/backups` — lister tous les backups BDD (date, heure, lien S3)
 
 ---

@@ -1,25 +1,25 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
-import { z } from 'zod'
+import { useCheckSlug } from '@/hooks/use-check-slug'
+import { authClient } from '@/lib/auth-client'
+import { slugify } from '@/lib/slugify'
 import {
   Button,
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
   Input,
   InputGroup,
   InputGroupAddon,
-  InputGroupText,
   InputGroupInput,
+  InputGroupText,
   Label,
 } from '@curved/ui'
-import { authClient } from '@/lib/auth-client'
-import { slugify } from '@/lib/slugify'
-import { useCheckSlug } from '@/hooks/use-check-slug'
+import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { z } from 'zod'
 
 const createOrgSchema = z.object({
   name: z.string().min(1, 'Organization name is required'),
@@ -35,6 +35,7 @@ export default function CreateOrganization() {
   const navigate = useNavigate()
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
   const [serverError, setServerError] = useState('')
+  const { data: organizations, refetch } = authClient.useListOrganizations()
 
   const {
     register,
@@ -49,6 +50,10 @@ export default function CreateOrganization() {
 
   const slug = watch('slug')
   const { status: slugStatus, isChecking } = useCheckSlug(slug)
+
+  if (organizations && organizations.length > 0) {
+    navigate('/dashboard')
+  }
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -67,7 +72,7 @@ export default function CreateOrganization() {
 
     setServerError('')
 
-    const { data: org, error } = await authClient.organization.create({
+    const { error } = await authClient.organization.create({
       name: values.name.trim(),
       slug: values.slug,
     })
@@ -77,11 +82,7 @@ export default function CreateOrganization() {
       return
     }
 
-    if (org) {
-      await authClient.organization.setActive({ organizationId: org.id })
-    }
-
-    navigate('/dashboard')
+    refetch() // Refresh organizations list to get the new org
   }
 
   return (

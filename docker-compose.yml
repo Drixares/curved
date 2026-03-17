@@ -10,6 +10,36 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/packages/api/node_modules
+      - /app/packages/web/node_modules
+      - /app/packages/admin/node_modules
+      - /app/packages/ui/node_modules
+      - /app/packages/crons/node_modules
+    ports:
+      - '3000:3000'
+      - '5173:5173'
+      - '5174:5174'
+      - '4983:4983'
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
+      BETTER_AUTH_SECRET: docker-dev-secret-minimum-32-chars-long-ok
+      BETTER_AUTH_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   postgres_data:

@@ -1,0 +1,202 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches: [develop, staging]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-stg
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  migrate:
+    name: Run DB Migrations (STG)
+    runs-on: ubuntu-latest
+    needs: ci
+    environment: staging
+    permissions:
+      contents: read
+      # TODO: Switch to OIDC — add id-token: write and use role-to-assume
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.2'
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Get DATABASE_URL from Secrets Manager
+        run: |
+          DB_URL=$(aws secretsmanager get-secret-value \
+            --secret-id ${{ vars.SECRETS_MANAGER_STG }} \
+            --query 'SecretString' --output text | jq -r '.DATABASE_URL')
+          if [ -z "$DB_URL" ] || [ "$DB_URL" = "null" ]; then
+            echo "::error::Failed to retrieve DATABASE_URL from Secrets Manager"
+            exit 1
+          fi
+          echo "::add-mask::${DB_URL}"
+          echo "DATABASE_URL=${DB_URL}" >> $GITHUB_ENV
+
+      - name: Run migrations
+        run: cd packages/api && bunx drizzle-kit migrate
+
+  deploy-api:
+    name: Deploy API to Lambda (STG)
+    runs-on: ubuntu-latest
+    needs: [ci, migrate]
+    environment: staging
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: api-dist
+          path: dist/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Package Lambda
+        run: cd dist && zip -r ../lambda.zip .
+
+      - name: Deploy to Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name ${{ vars.LAMBDA_FUNCTION_API_STG }} \
+            --zip-file fileb://lambda.zip
+
+      - name: Wait for update
+        run: |
+          aws lambda wait function-updated \
+            --function-name ${{ vars.LAMBDA_FUNCTION_API_STG }}
+
+  deploy-web:
+    name: Deploy Web to S3 (STG)
+    runs-on: ubuntu-latest
+    needs: ci
+    environment: staging
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: dist/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sync to S3
+        run: aws s3 sync dist/ s3://${{ vars.S3_BUCKET_WEB_STG }} --delete
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ vars.CF_DISTRIBUTION_WEB_STG }} \
+            --paths "/*"
+
+  deploy-admin:
+    name: Deploy Admin to S3 (STG)
+    runs-on: ubuntu-latest
+    needs: ci
+    environment: staging
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: admin-dist
+          path: dist/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sync to S3
+        run: aws s3 sync dist/ s3://${{ vars.S3_BUCKET_ADMIN_STG }} --delete
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ vars.CF_DISTRIBUTION_ADMIN_STG }} \
+            --paths "/*"
+
+  deploy-crons:
+    name: Deploy Crons to Lambda (STG)
+    runs-on: ubuntu-latest
+    needs: ci
+    environment: staging
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: crons-dist
+          path: dist/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Package Lambda
+        run: cd dist && zip -r ../lambda.zip .
+
+      - name: Deploy to Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name ${{ vars.LAMBDA_FUNCTION_CRON_STG }} \
+            --zip-file fileb://lambda.zip
+
+      - name: Wait for update
+        run: |
+          aws lambda wait function-updated \
+            --function-name ${{ vars.LAMBDA_FUNCTION_CRON_STG }}
+
+  deploy-assets:
+    name: Deploy Assets to S3 (STG)
+    runs-on: ubuntu-latest
+    needs: ci
+    environment: staging
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sync assets to S3
+        run: aws s3 sync assets/ s3://${{ vars.S3_BUCKET_ASSETS_STG }} --delete

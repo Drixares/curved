@@ -1,0 +1,17 @@
+{
+  "name": "@curved/crons",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build:lambda": "bun build src/lambda.ts --target node --outdir dist --minify",
+    "package:lambda": "cd dist && zip -r ../lambda.zip ."
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "postgres": "^3.4.8"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

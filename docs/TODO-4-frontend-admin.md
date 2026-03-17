@@ -7,28 +7,32 @@
 
 ## Routing & Auth
 
-- [ ] Configurer React Router dans `main.tsx`
-- [ ] Page de connexion admin (`/sign-in`)
-- [ ] Guard d'authentification + vérification du rôle admin
-- [ ] Redirection si non-admin vers une page d'erreur
+- [x] Configurer React Router dans `main.tsx`
+- [x] Page de connexion admin (`/sign-in`)
+- [x] Guard d'authentification + vérification du rôle admin
+- [x] Redirection si non-admin vers une page d'erreur
+
+> **Note :** L'auth admin utilise un système JWT custom (table `admin_user` séparée), pas better-auth.
+> Identifiants par défaut : `admin@curved.dev` / `CurvedAdmin2026!`
 
 ## Pages
 
 ### Dashboard
 
-- [ ] `/` — dashboard avec statistiques globales :
+- [x] `/` — dashboard avec statistiques globales :
   - Nombre total d'utilisateurs
+  - Nombre total d'organisations
   - Nombre total d'équipes (teams)
   - Nombre total de projets
-  - Nombre total de tâches
-- [ ] Cartes de statistiques avec icônes
+  - Nombre total d'issues
+- [x] Cartes de statistiques avec icônes
 - [ ] (Optionnel) Graphiques d'évolution
 
 ### Utilisateurs
 
-- [ ] `/users` — liste de tous les utilisateurs
-- [ ] Tableau avec colonnes : nom, email, date d'inscription, rôle
-- [ ] Pagination
+- [x] `/users` — liste de tous les utilisateurs
+- [x] Tableau avec colonnes : nom, email, vérifié, date d'inscription
+- [x] Pagination
 - [ ] (Optionnel) Recherche/filtre
 
 ### Backups
@@ -44,13 +48,13 @@
 
 ## Composants
 
-- [ ] Layout admin (sidebar + header)
-- [ ] Stat card component
-- [ ] Data table component (réutilisable)
+- [x] Layout admin (sidebar + header)
+- [x] Stat card component
+- [x] Data table component (réutilisable)
 
 ## Services
 
-- [ ] Client HTTP avec token/cookie admin
-- [ ] `useAdminStats()` — hook pour les statistiques
-- [ ] `useAdminUsers()` — hook pour la liste des utilisateurs
+- [x] Client HTTP avec token JWT admin (`src/lib/api.ts`)
+- [x] Stats via `@tanstack/react-query` (queryKey: `['admin', 'stats']`)
+- [x] Users via `@tanstack/react-query` (queryKey: `['admin', 'users']`)
 - [ ] `useAdminBackups()` — hook pour la liste des backups

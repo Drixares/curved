@@ -14,7 +14,8 @@
 
 ## Modifications sur les tables existantes
 
-- [ ] Ajouter le champ `role` (`enum: 'user' | 'admin'`, default `'user'`) sur la table `user`
+- ~~[ ] Ajouter le champ `role` sur la table `user`~~ → remplacé par une table `admin_user` dédiée
+- [x] Table `admin_user` — id, email, password_hash, name, created_at (auth admin séparée de better-auth)
 
 ## Tables better-auth (plugin organization)
 

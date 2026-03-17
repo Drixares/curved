@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp, real, index, uniqueIndex } from 'drizzle-orm/pg-core'
 import { user } from './auth'
 import { team } from './team'
@@ -68,3 +69,41 @@ export const projectDependency = pgTable(
     uniqueIndex('projectDep_pair_uidx').on(table.projectId, table.dependsOnProjectId),
   ],
 )
+
+export const projectRelations = relations(project, ({ one, many }) => ({
+  team: one(team, {
+    fields: [project.teamId],
+    references: [team.id],
+  }),
+  lead: one(user, {
+    fields: [project.leadId],
+    references: [user.id],
+  }),
+  members: many(projectMember),
+  dependencies: many(projectDependency, { relationName: 'project' }),
+  dependents: many(projectDependency, { relationName: 'dependsOn' }),
+}))
+
+export const projectMemberRelations = relations(projectMember, ({ one }) => ({
+  project: one(project, {
+    fields: [projectMember.projectId],
+    references: [project.id],
+  }),
+  user: one(user, {
+    fields: [projectMember.userId],
+    references: [user.id],
+  }),
+}))
+
+export const projectDependencyRelations = relations(projectDependency, ({ one }) => ({
+  project: one(project, {
+    fields: [projectDependency.projectId],
+    references: [project.id],
+    relationName: 'project',
+  }),
+  dependsOn: one(project, {
+    fields: [projectDependency.dependsOnProjectId],
+    references: [project.id],
+    relationName: 'dependsOn',
+  }),
+}))

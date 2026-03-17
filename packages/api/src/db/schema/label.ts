@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp, index } from 'drizzle-orm/pg-core'
 import { organization } from './auth'
 import { team } from './team'
@@ -19,3 +20,14 @@ export const label = pgTable(
     index('label_teamId_idx').on(table.teamId),
   ],
 )
+
+export const labelRelations = relations(label, ({ one }) => ({
+  organization: one(organization, {
+    fields: [label.organizationId],
+    references: [organization.id],
+  }),
+  team: one(team, {
+    fields: [label.teamId],
+    references: [team.id],
+  }),
+}))

@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp, integer, index, uniqueIndex } from 'drizzle-orm/pg-core'
 import { user, organization } from './auth'
 
@@ -46,3 +47,22 @@ export const teamMember = pgTable(
     uniqueIndex('teamMember_team_user_uidx').on(table.teamId, table.userId),
   ],
 )
+
+export const teamRelations = relations(team, ({ one, many }) => ({
+  organization: one(organization, {
+    fields: [team.organizationId],
+    references: [organization.id],
+  }),
+  members: many(teamMember),
+}))
+
+export const teamMemberRelations = relations(teamMember, ({ one }) => ({
+  team: one(team, {
+    fields: [teamMember.teamId],
+    references: [team.id],
+  }),
+  user: one(user, {
+    fields: [teamMember.userId],
+    references: [user.id],
+  }),
+}))

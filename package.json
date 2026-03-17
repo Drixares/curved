@@ -6,6 +6,7 @@
   ],
   "scripts": {
     "dev": "mprocs",
+    "dev:docker": "docker compose up --build",
     "build": "bun run --filter '*' build",
     "checks": "prettier --check .",
     "checks:fix": "prettier --write .",
