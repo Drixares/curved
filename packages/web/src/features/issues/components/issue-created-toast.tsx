@@ -1,13 +1,8 @@
 import { Button } from '@curved/ui'
-import {
-  Cancel01Icon,
-  CheckmarkCircle02Icon,
-  Copy01Icon,
-  GitBranchIcon,
-  Link01Icon,
-} from '@hugeicons/core-free-icons'
+import { Copy01Icon, GitBranchIcon, Link01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ISSUES_PAGES } from '@/shared/constants/pages'
+import { CustomToast } from '@/shared/components/custom-toast'
 import { useCopyToClipboard } from '@/shared/hooks/use-copy-to-clipboard'
 import { slugify } from '@/shared/lib/slugify'
 import { useNavigate } from 'react-router-dom'
@@ -40,57 +35,45 @@ export function IssueCreatedToast({
   }
 
   return (
-    <div className="bg-sidebar border-border w-90 rounded-lg border p-3 shadow-lg">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <HugeiconsIcon
-            icon={CheckmarkCircle02Icon}
-            size={16}
-            strokeWidth={2}
-            className="text-emerald-500"
-          />
-          <span className="text-sm font-medium">Issue created</span>
+    <CustomToast
+      toastId={toastId}
+      variant="success"
+      message="Issue created"
+      description={
+        <div className="flex items-center gap-1.5">
+          <span className="text-muted-foreground text-sm">{issueKey}</span>
+          <span className="text-muted-foreground text-sm">—</span>
+          <span className="truncate text-sm">{title}</span>
         </div>
-        <button
-          onClick={() => toast.dismiss(toastId)}
-          className="text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <HugeiconsIcon icon={Cancel01Icon} size={14} strokeWidth={2} />
-        </button>
-      </div>
-
-      <div className="mt-2 flex items-center gap-1.5">
-        <span className="text-muted-foreground text-sm">{issueKey}</span>
-        <span className="text-muted-foreground text-sm">—</span>
-        <span className="truncate text-sm">{title}</span>
-      </div>
-
-      <div className="mt-2 flex items-center justify-between">
-        <button onClick={handleViewIssue} className="text-primary text-sm hover:underline">
-          View issue
-        </button>
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => copy(`${window.location.origin}${ISSUES_PAGES.DETAIL(issueId)}`)}
-            title="Copy link"
-          >
-            <HugeiconsIcon icon={Link01Icon} size={14} strokeWidth={2} />
-          </Button>
-          <Button variant="ghost" size="icon-sm" onClick={() => copy(issueKey)} title="Copy ID">
-            <HugeiconsIcon icon={Copy01Icon} size={14} strokeWidth={2} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => copy(branchName)}
-            title="Copy branch name"
-          >
-            <HugeiconsIcon icon={GitBranchIcon} size={14} strokeWidth={2} />
-          </Button>
+      }
+      actions={
+        <div className="flex items-center justify-between">
+          <button onClick={handleViewIssue} className="text-primary text-sm hover:underline">
+            View issue
+          </button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => copy(`${window.location.origin}${ISSUES_PAGES.DETAIL(issueId)}`)}
+              title="Copy link"
+            >
+              <HugeiconsIcon icon={Link01Icon} size={14} strokeWidth={2} />
+            </Button>
+            <Button variant="ghost" size="icon-sm" onClick={() => copy(issueKey)} title="Copy ID">
+              <HugeiconsIcon icon={Copy01Icon} size={14} strokeWidth={2} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => copy(branchName)}
+              title="Copy branch name"
+            >
+              <HugeiconsIcon icon={GitBranchIcon} size={14} strokeWidth={2} />
+            </Button>
+          </div>
         </div>
-      </div>
-    </div>
+      }
+    />
   )
 }

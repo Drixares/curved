@@ -1,16 +1,8 @@
 import { useIssue } from '@/features/issues/hooks/use-issue'
 import { useTeams } from '@/features/teams/hooks/use-teams'
 import { PAGES } from '@/shared/constants/pages'
-import { useLocation } from 'react-router-dom'
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
+import { getInitials } from '@/shared/lib/format'
+import { Link, useLocation } from 'react-router-dom'
 
 const pageTitles: Record<string, string> = {
   [PAGES.MY_ASSIGNED]: 'My Issues',
@@ -26,12 +18,25 @@ export function ContentHeader() {
   const { data: issue } = useIssue(issueId)
 
   if (issueMatch && issue) {
+    const team = teams?.find((t) => t.identifier === issue.team.identifier)
     const identifier = `${issue.team.identifier}-${issue.number}`
     return (
       <header className="border-border flex shrink-0 items-center gap-2 border-b px-5 pt-3.5 pb-2.5">
-        {issue.project && (
+        {team && (
           <>
-            <span className="text-muted-foreground text-sm">{issue.project.name}</span>
+            <Link
+              to={PAGES.ISSUES(team.identifier)}
+              className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm"
+            >
+              {team.icon ? (
+                <span className="text-sm">{team.icon}</span>
+              ) : (
+                <span className="bg-muted flex size-4 items-center justify-center rounded text-[8px] font-medium">
+                  {getInitials(team.name)}
+                </span>
+              )}
+              {team.name}
+            </Link>
             <span className="text-muted-foreground text-xs">›</span>
           </>
         )}

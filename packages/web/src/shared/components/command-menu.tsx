@@ -19,7 +19,7 @@ import {
   Task01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { useEffect } from 'react'
+import { useKeyboardShortcuts } from '@/shared/hooks/use-keyboard-shortcurts'
 import { useNavigate } from 'react-router-dom'
 
 const pages = [
@@ -39,17 +39,7 @@ export function CommandMenu() {
   const openCreateIssue = useCreateIssue((s) => s.open)
   const openCreateProject = useCreateProject((s) => s.open)
 
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        toggle()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [toggle])
+  useKeyboardShortcuts([{ key: 'cmd+k', action: toggle }], { ignoreInputs: false })
 
   function handleSelect(to: string) {
     navigate(to)

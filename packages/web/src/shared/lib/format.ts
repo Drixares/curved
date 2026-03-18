@@ -13,9 +13,10 @@ export function formatDate(dateStr: string | null | undefined) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-export function formatActivityDate(dateStr: string) {
+export function formatDateWithYear(dateStr: string | null | undefined) {
+  if (!dateStr) return null
   const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 export function formatRelativeTime(dateStr: string) {

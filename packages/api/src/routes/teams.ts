@@ -170,6 +170,9 @@ export const teamRoutes = new Hono<{ Variables: AuthVariables }>()
         team: {
           columns: { id: true, identifier: true },
         },
+        assignee: {
+          columns: { id: true, name: true, image: true },
+        },
         labels: {
           with: {
             label: {
@@ -188,6 +191,7 @@ export const teamRoutes = new Hono<{ Variables: AuthVariables }>()
       priority: i.priority,
       status: i.status,
       team: i.team,
+      assignee: i.assignee,
       labels: i.labels.map((il) => il.label),
       createdAt: i.createdAt,
       updatedAt: i.updatedAt,

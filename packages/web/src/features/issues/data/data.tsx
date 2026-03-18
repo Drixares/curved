@@ -25,6 +25,14 @@ export const statusTypeIcons: Record<string, typeof CircleIcon> = {
   cancelled: CancelCircleIcon,
 }
 
+export const STATUS_TYPE_ORDER: Record<string, number> = {
+  backlog: 0,
+  unstarted: 1,
+  started: 2,
+  completed: 3,
+  cancelled: 4,
+}
+
 export const priorities = [
   {
     label: 'None',

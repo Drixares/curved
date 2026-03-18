@@ -1,7 +1,7 @@
 import { HugeiconsIcon } from '@hugeicons/react'
 import { CubeIcon } from '@hugeicons/core-free-icons'
 
-import { formatActivityDate } from '@/shared/lib/format'
+import { formatDate } from '@/shared/lib/format'
 import SidebarCard from '@/shared/components/sidebar-card'
 
 interface ProjectActivityCardProps {
@@ -23,7 +23,7 @@ export default function ProjectActivityCard({ lead, createdAt }: ProjectActivity
         </div>
         <p className="text-muted-foreground text-xs">
           <span className="text-foreground font-medium">{lead?.name ?? 'Someone'}</span> created the
-          project &middot; {formatActivityDate(createdAt)}
+          project &middot; {formatDate(createdAt)}
         </p>
       </div>
     </SidebarCard>

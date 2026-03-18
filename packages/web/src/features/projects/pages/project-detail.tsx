@@ -1,19 +1,10 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Separator,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from '@curved/ui'
+import { Avatar, AvatarFallback, AvatarImage, Separator } from '@curved/ui'
 import {
   Add01Icon,
   Calendar03Icon,
   CubeIcon,
   Edit02Icon,
   MoreHorizontalIcon,
-  StarIcon,
   UserIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -26,6 +17,7 @@ import { InlineEditableText } from '@/features/projects/components/inline-editab
 import { InlineEditableTextarea } from '@/features/projects/components/inline-editable-textarea'
 import { LeadSelect } from '@/features/projects/components/lead-select'
 import { PrioritySelect } from '@/features/projects/components/priority-select'
+import { ProjectDetailHeader } from '@/features/projects/components/project-detail-header'
 import ProjectSidebar from '@/features/projects/components/project-sidebar'
 import { StatusSelect } from '@/features/projects/components/status-select'
 import {
@@ -82,45 +74,11 @@ export default function ProjectDetail() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* Top bar with breadcrumb and tabs */}
-      <header className="border-border shrink-0 border-b">
-        <div className="flex items-center gap-1.5 px-5 pt-3 pb-0 text-sm">
-          {team && (
-            <>
-              <Link
-                to={PAGES.PROJECTS(project.team.identifier)}
-                className="text-muted-foreground hover:text-foreground flex items-center gap-1.5"
-              >
-                <HugeiconsIcon icon={CubeIcon} className="size-4" />
-                {team.name}
-              </Link>
-              <span className="text-muted-foreground">&gt;</span>
-            </>
-          )}
-          <span className="text-muted-foreground flex items-center gap-1.5">
-            <HugeiconsIcon icon={CubeIcon} className="size-4" />
-            {project.name}
-          </span>
-          <div className="ml-auto flex items-center gap-1">
-            <button className="text-muted-foreground hover:text-foreground rounded p-1 transition-colors">
-              <HugeiconsIcon icon={StarIcon} className="size-4" />
-            </button>
-            <button className="text-muted-foreground hover:text-foreground rounded p-1 transition-colors">
-              <HugeiconsIcon icon={MoreHorizontalIcon} className="size-4" />
-            </button>
-          </div>
-        </div>
-        <Tabs defaultValue="overview">
-          <TabsList variant="line" className="px-5">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="updates">Updates</TabsTrigger>
-            <TabsTrigger value="issues">Issues</TabsTrigger>
-            <TabsTrigger value="add" disabled>
-              <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </header>
+      <ProjectDetailHeader
+        projectName={project.name}
+        teamIdentifier={project.team.identifier}
+        team={team ? { name: team.name, icon: team.icon } : undefined}
+      />
 
       {/* Content area */}
       <div className="flex min-h-0 flex-1">

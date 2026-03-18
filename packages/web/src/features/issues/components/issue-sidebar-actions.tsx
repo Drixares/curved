@@ -2,7 +2,7 @@ import { Button, Kbd, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger }
 import { Copy01Icon, Link01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
-import { copyWithToast } from '@/features/issues/components/copied-toast'
+import { copyWithToast } from '@/shared/components/custom-toast'
 import { useCopyToClipboard } from '@/shared/hooks/use-copy-to-clipboard'
 import { useKeyboardShortcuts } from '@/shared/hooks/use-keyboard-shortcurts'
 
