@@ -7,6 +7,9 @@ HUSKY=0 bun install
 echo "Running database migrations..."
 cd packages/api && bunx drizzle-kit migrate && cd /app
 
+echo "Seeding admin user..."
+cd packages/api && bun run src/db/seed-admin.ts && cd /app
+
 echo "Starting dev servers..."
 
 (cd /app/packages/api && bun run --watch src/index.ts) &

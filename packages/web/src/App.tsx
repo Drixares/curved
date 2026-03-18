@@ -19,7 +19,7 @@ import {
   TabsTrigger,
 } from '@curved/ui'
 import { Link } from 'react-router-dom'
-import AppHeader from './components/app-header'
+import AppHeader from './shared/components/app-header'
 
 function App() {
   return (

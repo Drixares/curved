@@ -37,6 +37,9 @@ services:
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
       BETTER_AUTH_SECRET: docker-dev-secret-minimum-32-chars-long-ok
       BETTER_AUTH_URL: http://localhost:3000
+      ADMIN_SEED_EMAIL: ${ADMIN_SEED_EMAIL:-admin@curved.dev}
+      ADMIN_SEED_PASSWORD: ${ADMIN_SEED_PASSWORD:-CurvedAdmin2026!}
+      ADMIN_SEED_NAME: ${ADMIN_SEED_NAME:-Admin}
     depends_on:
       postgres:
         condition: service_healthy

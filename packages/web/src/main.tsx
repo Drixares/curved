@@ -3,31 +3,33 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from '@curved/ui'
-import { queryClient } from './lib/query-client'
-import ProtectedRoute from './components/protected-route'
-import GuestRoute from './components/guest-route'
+import { queryClient } from './shared/lib/query-client'
+import ProtectedRoute from './features/auth/components/protected-route'
+import GuestRoute from './features/auth/components/guest-route'
 import App from './App'
 import { Toaster } from 'sonner'
 import './index.css'
 
-const SignIn = lazy(() => import('./pages/sign-in'))
-const SignUp = lazy(() => import('./pages/sign-up'))
-const DashboardLayout = lazy(() => import('./components/dashboard-layout'))
-const SettingsLayout = lazy(() => import('./components/settings-layout'))
-const Dashboard = lazy(() => import('./pages/dashboard'))
-const Issues = lazy(() => import('./pages/issues'))
-const CreateOrganization = lazy(() => import('./pages/create-organization'))
-const CreateTeam = lazy(() => import('./pages/create-team'))
-const OrganizationDetail = lazy(() => import('./pages/organization-detail'))
-const OrganizationMembers = lazy(() => import('./pages/organization-members'))
-const ProfileSettings = lazy(() => import('./pages/profile-settings'))
-const SecuritySettings = lazy(() => import('./pages/security-settings'))
-const InvitationAccept = lazy(() => import('./pages/invitation-accept'))
-const IssueDetail = lazy(() => import('./pages/issue-detail'))
-const TeamIssues = lazy(() => import('./pages/team-issues'))
-const TeamProjects = lazy(() => import('./pages/team-projects'))
-const TeamViews = lazy(() => import('./pages/team-views'))
-const TeamSettings = lazy(() => import('./pages/team-settings'))
+const SignIn = lazy(() => import('./features/auth/pages/sign-in'))
+const SignUp = lazy(() => import('./features/auth/pages/sign-up'))
+const DashboardLayout = lazy(() => import('./features/dashboard/components/dashboard-layout'))
+const SettingsLayout = lazy(() => import('./features/settings/components/settings-layout'))
+const Dashboard = lazy(() => import('./features/dashboard/pages/dashboard'))
+const Issues = lazy(() => import('./features/issues/pages/issues'))
+const CreateOrganization = lazy(() => import('./features/organizations/pages/create-organization'))
+const CreateTeam = lazy(() => import('./features/teams/pages/create-team'))
+const OrganizationDetail = lazy(() => import('./features/organizations/pages/organization-detail'))
+const OrganizationMembers = lazy(
+  () => import('./features/organizations/pages/organization-members'),
+)
+const ProfileSettings = lazy(() => import('./features/settings/pages/profile-settings'))
+const SecuritySettings = lazy(() => import('./features/settings/pages/security-settings'))
+const InvitationAccept = lazy(() => import('./features/organizations/pages/invitation-accept'))
+const IssueDetail = lazy(() => import('./features/issues/pages/issue-detail'))
+const TeamIssues = lazy(() => import('./features/issues/pages/team-issues'))
+const TeamProjects = lazy(() => import('./features/teams/pages/team-projects'))
+const TeamViews = lazy(() => import('./features/teams/pages/team-views'))
+const TeamSettings = lazy(() => import('./features/teams/pages/team-settings'))
 
 function Loading() {
   return (

@@ -15,7 +15,9 @@ export async function request<T>(path: string, options?: RequestInit): Promise<T
 
   if (res.status === 401) {
     clearToken()
-    window.location.href = '/sign-in'
+    if (window.location.pathname !== '/sign-in') {
+      window.location.href = '/sign-in'
+    }
     throw new Error('Unauthorized')
   }
 
