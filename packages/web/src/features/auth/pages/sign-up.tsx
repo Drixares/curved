@@ -1,26 +1,27 @@
-import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
-import { z } from 'zod'
+import SocialAuthButtons from '@/features/auth/components/social-auth-buttons'
+import { useInvitation } from '@/features/organizations/hooks/use-invitation'
+import { PAGES } from '@/shared/constants/pages'
+import { authClient } from '@/shared/lib/auth-client'
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Button,
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
   Input,
   Label,
   Separator,
 } from '@curved/ui'
-import { authClient } from '@/shared/lib/auth-client'
-import { useInvitation } from '@/features/organizations/hooks/use-invitation'
-import SocialAuthButtons from '@/features/auth/components/social-auth-buttons'
+import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { z } from 'zod'
 
 const signUpSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -62,7 +63,7 @@ export default function SignUp() {
   const onSubmit = async (values: SignUpValues) => {
     setServerError('')
 
-    const redirectTo = searchParams.get('redirect') || '/my-issues/assigned'
+    const redirectTo = searchParams.get('redirect') || PAGES.MY_ASSIGNED
     const { error } = await authClient.signUp.email(values, {
       onSuccess: () => navigate(redirectTo),
       onError: (ctx) => {
@@ -155,7 +156,7 @@ export default function SignUp() {
         <CardFooter className="justify-center">
           <p className="text-muted-foreground text-sm">
             Already have an account?{' '}
-            <Link to="/sign-in" className="text-foreground font-medium hover:underline">
+            <Link to={PAGES.SIGN_IN} className="text-foreground font-medium hover:underline">
               Sign in
             </Link>
           </p>

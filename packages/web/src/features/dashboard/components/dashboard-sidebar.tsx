@@ -1,8 +1,9 @@
-import { useSidebar } from '@/shared/contexts/sidebar-context'
+import { useCreateIssue } from '@/features/issues/stores/create-issue-store'
 import { useTeams, type Team } from '@/features/teams/hooks/use-teams'
+import { PAGES } from '@/shared/constants/pages'
+import { useSidebar } from '@/shared/contexts/sidebar-context'
 import { authClient } from '@/shared/lib/auth-client'
 import { useCommandMenu } from '@/shared/stores/command-menu-store'
-import { useCreateIssue } from '@/features/issues/stores/create-issue-store'
 import {
   Avatar,
   AvatarFallback,
@@ -44,7 +45,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
-const navItems = [{ to: '/my-issues/assigned', label: 'My issues', icon: Task01Icon }]
+const navItems = [{ to: PAGES.MY_ASSIGNED, label: 'My issues', icon: Task01Icon }]
 
 function getInitials(name: string) {
   return name
@@ -139,7 +140,7 @@ function TeamActionsDropdown({ team }: { team: Team }) {
           Copy link
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate(`/team/${team.identifier}/settings`)}>
+        <DropdownMenuItem onClick={() => navigate(PAGES.SETTINGS(team.identifier))}>
           <HugeiconsIcon icon={Settings01Icon} size={16} strokeWidth={1.5} />
           Team settings
         </DropdownMenuItem>
@@ -169,7 +170,7 @@ function TeamsSection() {
           variant="ghost"
           size="icon"
           className="text-sidebar-foreground/40 hover:text-sidebar-foreground size-5"
-          onClick={() => navigate('/settings/teams/new')}
+          onClick={() => navigate(PAGES.NEW_TEAM)}
         >
           <HugeiconsIcon icon={Add01Icon} size={14} strokeWidth={2} />
         </Button>
@@ -205,7 +206,7 @@ export function DashboardSidebar() {
 
   const handleSignOut = async () => {
     await authClient.signOut()
-    navigate('/sign-in')
+    navigate(PAGES.SIGN_IN)
   }
 
   return (
@@ -237,11 +238,11 @@ export function DashboardSidebar() {
                 />
               </DropdownMenuTrigger>
               <DropdownMenuContent side="bottom" align="start" sideOffset={6} className="w-56">
-                <DropdownMenuItem onClick={() => navigate('/settings')}>
+                <DropdownMenuItem onClick={() => navigate(PAGES.ROOT)}>
                   Settings
                   <DropdownMenuShortcut>G then S</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/settings/members')}>
+                <DropdownMenuItem onClick={() => navigate(PAGES.MEMBERS)}>
                   <HugeiconsIcon icon={UserGroupIcon} size={16} strokeWidth={1.5} />
                   Invite and manage members
                 </DropdownMenuItem>

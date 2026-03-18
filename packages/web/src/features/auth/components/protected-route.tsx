@@ -1,3 +1,4 @@
+import { PAGES } from '@/shared/constants/pages'
 import { authClient } from '@/shared/lib/auth-client'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
@@ -15,14 +16,13 @@ export default function ProtectedRoute() {
   }
 
   if (!session) {
-    return <Navigate to={`/sign-in?redirect=${encodeURIComponent(location.pathname)}`} replace />
+    return (
+      <Navigate to={`${PAGES.SIGN_IN}?redirect=${encodeURIComponent(location.pathname)}`} replace />
+    )
   }
 
-  if (
-    (!organizations || organizations.length === 0) &&
-    location.pathname !== '/create-organization'
-  ) {
-    return <Navigate to="/create-organization" replace />
+  if ((!organizations || organizations.length === 0) && location.pathname !== PAGES.CREATE) {
+    return <Navigate to={PAGES.CREATE} replace />
   }
 
   return <Outlet />

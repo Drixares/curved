@@ -1,5 +1,6 @@
 import { InviteMemberDialog } from '@/features/organizations/components/invite-member-dialog'
 import { useOrganization, type OrgData } from '@/features/organizations/hooks/use-organization'
+import { PAGES } from '@/shared/constants/pages'
 import {
   Avatar,
   AvatarFallback,
@@ -69,7 +70,7 @@ export default function OrganizationDetail() {
             <Badge variant="secondary">{org.members.length}</Badge>
           </CardTitle>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" render={<Link to="/organization/members" />}>
+            <Button variant="outline" size="sm" render={<Link to={PAGES.MEMBERS} />}>
               Manage
             </Button>
             <Button size="sm" onClick={() => setInviteOpen(true)}>

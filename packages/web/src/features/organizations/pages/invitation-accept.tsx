@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useInvitation } from '@/features/organizations/hooks/use-invitation'
+import { PAGES } from '@/shared/constants/pages'
+import { authClient } from '@/shared/lib/auth-client'
 import {
   Avatar,
   AvatarFallback,
@@ -12,8 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@curved/ui'
-import { authClient } from '@/shared/lib/auth-client'
-import { useInvitation } from '@/features/organizations/hooks/use-invitation'
+import { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 function getInitials(name: string) {
   return name
@@ -60,11 +61,11 @@ export default function InvitationAccept() {
           </CardHeader>
           <CardContent>
             {session ? (
-              <Button onClick={() => navigate('/my-issues/assigned')} className="w-full">
+              <Button onClick={() => navigate(PAGES.MY_ASSIGNED)} className="w-full">
                 Go to issues
               </Button>
             ) : (
-              <Button render={<Link to="/sign-in" />} className="w-full">
+              <Button render={<Link to={PAGES.SIGN_IN} />} className="w-full">
                 Sign in
               </Button>
             )}
@@ -85,7 +86,7 @@ export default function InvitationAccept() {
       setActionLoading(false)
     } else {
       await authClient.organization.setActive({ organizationId: invitation!.organization.id })
-      navigate('/my-issues/assigned')
+      navigate(PAGES.MY_ASSIGNED)
     }
   }
 
@@ -99,7 +100,7 @@ export default function InvitationAccept() {
       setActionError(error.message ?? 'Failed to decline invitation')
       setActionLoading(false)
     } else {
-      navigate('/my-issues/assigned')
+      navigate(PAGES.MY_ASSIGNED)
     }
   }
 
@@ -131,14 +132,18 @@ export default function InvitationAccept() {
               Sign in or create an account to accept this invitation.
             </p>
             <Button
-              render={<Link to={`/sign-in?redirect=/invitations/accept/${invitationId}`} />}
+              render={
+                <Link to={`${PAGES.SIGN_IN}?redirect=${PAGES.INVITATION_ACCEPT(invitationId!)}`} />
+              }
               className="w-full"
             >
               Sign in
             </Button>
             <Button
               variant="outline"
-              render={<Link to={`/sign-up?redirect=/invitations/accept/${invitationId}`} />}
+              render={
+                <Link to={`${PAGES.SIGN_UP}?redirect=${PAGES.INVITATION_ACCEPT(invitationId!)}`} />
+              }
               className="w-full"
             >
               Create account

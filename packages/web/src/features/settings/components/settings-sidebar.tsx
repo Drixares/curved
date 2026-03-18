@@ -1,3 +1,4 @@
+import { PAGES } from '@/shared/constants/pages'
 import { useSidebar } from '@/shared/contexts/sidebar-context'
 import { Button, cn } from '@curved/ui'
 import {
@@ -11,10 +12,10 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 const settingsNavItems = [
-  { to: '/settings', label: 'General', icon: Settings01Icon, end: true },
-  { to: '/settings/profile', label: 'Profile', icon: UserIcon },
-  { to: '/settings/security', label: 'Security & access', icon: SecurityLockIcon },
-  { to: '/settings/members', label: 'Members', icon: UserGroupIcon },
+  { to: PAGES.ROOT, label: 'General', icon: Settings01Icon, end: true },
+  { to: PAGES.PROFILE, label: 'Profile', icon: UserIcon },
+  { to: PAGES.SECURITY, label: 'Security & access', icon: SecurityLockIcon },
+  { to: PAGES.MEMBERS, label: 'Members', icon: UserGroupIcon },
 ]
 
 export function SettingsSidebar() {
@@ -35,7 +36,7 @@ export function SettingsSidebar() {
             variant="ghost"
             size="sm"
             className="text-sidebar-foreground/60 hover:text-sidebar-foreground gap-1.5"
-            onClick={() => navigate('/my-issues/assigned')}
+            onClick={() => navigate(PAGES.MY_ASSIGNED)}
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} strokeWidth={2} />
             Back to app

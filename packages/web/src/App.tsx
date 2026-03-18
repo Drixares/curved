@@ -20,6 +20,7 @@ import {
 } from '@curved/ui'
 import { Link } from 'react-router-dom'
 import AppHeader from './shared/components/app-header'
+import { PAGES } from './shared/constants/pages'
 
 function App() {
   return (
@@ -36,7 +37,7 @@ function App() {
           A modern platform with beautiful components. Fast, accessible, and ready to ship.
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
-          <Link to="/sign-up">
+          <Link to={PAGES.SIGN_UP}>
             <Button size="lg">Start building</Button>
           </Link>
           <Button variant="outline" size="lg">

@@ -1,14 +1,3 @@
-import { useParams, Link } from 'react-router-dom'
-import { HugeiconsIcon } from '@hugeicons/react'
-import {
-  Add01Icon,
-  Calendar03Icon,
-  CubeIcon,
-  Edit02Icon,
-  MoreHorizontalIcon,
-  StarIcon,
-  UserIcon,
-} from '@hugeicons/core-free-icons'
 import {
   Avatar,
   AvatarFallback,
@@ -18,25 +7,37 @@ import {
   TabsList,
   TabsTrigger,
 } from '@curved/ui'
-import { useCallback } from 'react'
-
-import { useProject } from '@/features/projects/hooks/use-project'
-import { useUpdateProjectMutation } from '@/features/projects/hooks/use-update-project'
 import {
-  projectStatuses,
-  projectPriorities,
-  projectStatusIcons,
-} from '@/features/projects/data/data'
-import { StatusSelect } from '@/features/projects/components/status-select'
-import { PrioritySelect } from '@/features/projects/components/priority-select'
-import { LeadSelect } from '@/features/projects/components/lead-select'
+  Add01Icon,
+  Calendar03Icon,
+  CubeIcon,
+  Edit02Icon,
+  MoreHorizontalIcon,
+  StarIcon,
+  UserIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useCallback } from 'react'
+import { Link, useParams } from 'react-router-dom'
+
+import { useTeamMembers } from '@/features/issues/hooks/use-team-members'
 import { DateSelect } from '@/features/projects/components/date-select'
 import { InlineEditableText } from '@/features/projects/components/inline-editable-text'
 import { InlineEditableTextarea } from '@/features/projects/components/inline-editable-textarea'
+import { LeadSelect } from '@/features/projects/components/lead-select'
+import { PrioritySelect } from '@/features/projects/components/priority-select'
 import ProjectSidebar from '@/features/projects/components/project-sidebar'
-import { useTeamMembers } from '@/features/issues/hooks/use-team-members'
+import { StatusSelect } from '@/features/projects/components/status-select'
+import {
+  projectPriorities,
+  projectStatuses,
+  projectStatusIcons,
+} from '@/features/projects/data/data'
+import { useProject } from '@/features/projects/hooks/use-project'
+import { useUpdateProjectMutation } from '@/features/projects/hooks/use-update-project'
 import { useTeams } from '@/features/teams/hooks/use-teams'
-import { getInitials, formatDate } from '@/shared/lib/format'
+import { PAGES } from '@/shared/constants/pages'
+import { formatDate, getInitials } from '@/shared/lib/format'
 
 export default function ProjectDetail() {
   const { projectId } = useParams<{ projectId: string }>()
@@ -67,7 +68,7 @@ export default function ProjectDetail() {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2">
         <p className="text-muted-foreground">Project not found</p>
-        <Link to="/my-issues/assigned" className="text-sm underline">
+        <Link to={PAGES.MY_ASSIGNED} className="text-sm underline">
           Back to issues
         </Link>
       </div>
@@ -87,7 +88,7 @@ export default function ProjectDetail() {
           {team && (
             <>
               <Link
-                to={`/team/${project.team.identifier}/projects`}
+                to={PAGES.PROJECTS(project.team.identifier)}
                 className="text-muted-foreground hover:text-foreground flex items-center gap-1.5"
               >
                 <HugeiconsIcon icon={CubeIcon} className="size-4" />

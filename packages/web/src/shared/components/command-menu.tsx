@@ -1,6 +1,7 @@
-import { useCommandMenu } from '@/shared/stores/command-menu-store'
 import { useCreateIssue } from '@/features/issues/stores/create-issue-store'
 import { useCreateProject } from '@/features/projects/stores/create-project-store'
+import { PAGES } from '@/shared/constants/pages'
+import { useCommandMenu } from '@/shared/stores/command-menu-store'
 import {
   Command,
   CommandDialog,
@@ -22,8 +23,8 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const pages = [
-  { to: '/my-issues/assigned', label: 'My Issues', icon: Task01Icon },
-  { to: '/settings', label: 'Settings', icon: Settings01Icon },
+  { to: PAGES.MY_ASSIGNED, label: 'My Issues', icon: Task01Icon },
+  { to: PAGES.ROOT, label: 'Settings', icon: Settings01Icon },
 ]
 
 const actions = [

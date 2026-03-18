@@ -1,3 +1,4 @@
+import { PAGES } from '@/shared/constants/pages'
 import { api } from '@/shared/lib/api-client'
 import { authClient } from '@/shared/lib/auth-client'
 import { slugify } from '@/shared/lib/slugify'
@@ -71,7 +72,7 @@ export default function CreateTeam() {
     }
 
     await queryClient.invalidateQueries({ queryKey: ['teams', activeOrg?.id] })
-    navigate('/my-issues/assigned')
+    navigate(PAGES.MY_ASSIGNED)
   }
 
   return (

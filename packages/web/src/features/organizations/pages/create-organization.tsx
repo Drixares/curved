@@ -1,4 +1,5 @@
 import { useCheckSlug } from '@/features/organizations/hooks/use-check-slug'
+import { PAGES } from '@/shared/constants/pages'
 import { authClient } from '@/shared/lib/auth-client'
 import { slugify } from '@/shared/lib/slugify'
 import {
@@ -52,7 +53,7 @@ export default function CreateOrganization() {
   const { status: slugStatus, isChecking } = useCheckSlug(slug)
 
   if (organizations && organizations.length > 0) {
-    navigate('/my-issues/assigned')
+    navigate(PAGES.MY_ASSIGNED)
   }
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {

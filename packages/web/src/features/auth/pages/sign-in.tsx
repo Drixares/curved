@@ -1,8 +1,6 @@
-import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
-import { z } from 'zod'
+import SocialAuthButtons from '@/features/auth/components/social-auth-buttons'
+import { PAGES } from '@/shared/constants/pages'
+import { authClient } from '@/shared/lib/auth-client'
 import {
   Button,
   Card,
@@ -15,8 +13,11 @@ import {
   Label,
   Separator,
 } from '@curved/ui'
-import { authClient } from '@/shared/lib/auth-client'
-import SocialAuthButtons from '@/features/auth/components/social-auth-buttons'
+import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { z } from 'zod'
 
 const signInSchema = z.object({
   email: z.email('Please enter a valid email'),
@@ -46,7 +47,7 @@ export default function SignIn() {
     if (error) {
       setServerError(error.message ?? 'An error occurred')
     } else {
-      navigate(searchParams.get('redirect') || '/my-issues/assigned')
+      navigate(searchParams.get('redirect') || PAGES.MY_ASSIGNED)
     }
   }
 
@@ -96,7 +97,7 @@ export default function SignIn() {
         <CardFooter className="justify-center">
           <p className="text-muted-foreground text-sm">
             Don&apos;t have an account?{' '}
-            <Link to="/sign-up" className="text-foreground font-medium hover:underline">
+            <Link to={PAGES.SIGN_UP} className="text-foreground font-medium hover:underline">
               Sign up
             </Link>
           </p>

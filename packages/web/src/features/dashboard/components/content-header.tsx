@@ -1,6 +1,7 @@
-import { useLocation } from 'react-router-dom'
-import { useTeams } from '@/features/teams/hooks/use-teams'
 import { useIssue } from '@/features/issues/hooks/use-issue'
+import { useTeams } from '@/features/teams/hooks/use-teams'
+import { PAGES } from '@/shared/constants/pages'
+import { useLocation } from 'react-router-dom'
 
 function getInitials(name: string) {
   return name
@@ -12,7 +13,7 @@ function getInitials(name: string) {
 }
 
 const pageTitles: Record<string, string> = {
-  '/my-issues/assigned': 'My Issues',
+  [PAGES.MY_ASSIGNED]: 'My Issues',
 }
 
 export function ContentHeader() {

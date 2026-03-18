@@ -1,19 +1,20 @@
-import { useParams, Link } from 'react-router-dom'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { Copy01Icon, Link01Icon } from '@hugeicons/core-free-icons'
 import { Button, Separator } from '@curved/ui'
-import { useRef, useEffect, useState } from 'react'
+import { Copy01Icon, Link01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 
-import { useIssue } from '@/features/issues/hooks/use-issue'
-import { useUpdateIssue } from '@/features/issues/hooks/use-update-issue'
-import { useTeamMembers } from '@/features/issues/hooks/use-team-members'
-import { useTeamStatuses } from '@/features/issues/hooks/use-team-statuses'
-import { useTeamLabels } from '@/features/issues/hooks/use-team-labels'
-import { StatusChip } from '@/features/issues/components/status-chip'
-import { PriorityChip } from '@/features/issues/components/priority-chip'
+import ActivitySection from '@/features/issues/components/activity-section'
 import { AssigneeChip } from '@/features/issues/components/assignee-chip'
 import { LabelsChip } from '@/features/issues/components/labels-chip'
-import ActivitySection from '@/features/issues/components/activity-section'
+import { PriorityChip } from '@/features/issues/components/priority-chip'
+import { StatusChip } from '@/features/issues/components/status-chip'
+import { useIssue } from '@/features/issues/hooks/use-issue'
+import { useTeamLabels } from '@/features/issues/hooks/use-team-labels'
+import { useTeamMembers } from '@/features/issues/hooks/use-team-members'
+import { useTeamStatuses } from '@/features/issues/hooks/use-team-statuses'
+import { useUpdateIssue } from '@/features/issues/hooks/use-update-issue'
+import { PAGES } from '@/shared/constants/pages'
 
 export default function IssueDetail() {
   const { issueId } = useParams<{ issueId: string }>()
@@ -57,7 +58,7 @@ export default function IssueDetail() {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2">
         <p className="text-muted-foreground">Issue not found</p>
-        <Link to="/my-issues/assigned" className="text-sm underline">
+        <Link to={PAGES.MY_ASSIGNED} className="text-sm underline">
           Back to issues
         </Link>
       </div>

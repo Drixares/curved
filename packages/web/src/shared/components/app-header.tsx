@@ -1,3 +1,4 @@
+import { PAGES } from '@/shared/constants/pages'
 import { Button, Switch, useTheme } from '@curved/ui'
 import { Link } from 'react-router-dom'
 
@@ -19,12 +20,12 @@ export default function AppHeader() {
               size="sm"
             />
           </div>
-          <Link to="/sign-in">
+          <Link to={PAGES.SIGN_IN}>
             <Button variant="outline" size="sm">
               Sign in
             </Button>
           </Link>
-          <Link to="/sign-up">
+          <Link to={PAGES.SIGN_UP}>
             <Button size="sm">Get started</Button>
           </Link>
         </div>

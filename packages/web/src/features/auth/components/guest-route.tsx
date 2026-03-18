@@ -1,5 +1,6 @@
-import { Navigate, Outlet, useSearchParams } from 'react-router-dom'
+import { PAGES } from '@/shared/constants/pages'
 import { authClient } from '@/shared/lib/auth-client'
+import { Navigate, Outlet, useSearchParams } from 'react-router-dom'
 
 export default function GuestRoute() {
   const { data: session, isPending } = authClient.useSession()
@@ -14,7 +15,7 @@ export default function GuestRoute() {
   }
 
   if (session) {
-    const redirect = searchParams.get('redirect') || '/my-issues/assigned'
+    const redirect = searchParams.get('redirect') || PAGES.MY_ASSIGNED
     return <Navigate to={redirect} replace />
   }
 
