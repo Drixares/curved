@@ -97,3 +97,4 @@ export {
   TableRow,
 } from './components/ui/table'
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './components/ui/tooltip'

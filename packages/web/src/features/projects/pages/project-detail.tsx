@@ -263,7 +263,6 @@ export default function ProjectDetail() {
           </div>
         </div>
 
-        {/* Right sidebar */}
         <ProjectSidebar project={project} team={team} members={members ?? []} onUpdate={update} />
       </div>
     </div>

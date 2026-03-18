@@ -7,6 +7,8 @@ import {
   Link01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { ISSUES_PAGES } from '@/shared/constants/pages'
+import { useCopyToClipboard } from '@/shared/hooks/use-copy-to-clipboard'
 import { slugify } from '@/shared/lib/slugify'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -27,25 +29,14 @@ export function IssueCreatedToast({
   issueId,
 }: IssueCreatedToastProps) {
   const navigate = useNavigate()
+  const { copy } = useCopyToClipboard()
 
   const issueKey = `${identifier}-${issueNumber}`
   const branchName = `${identifier.toLowerCase()}-${issueNumber}-${slugify(title)}`
 
   function handleViewIssue() {
-    navigate(`/issue/${issueId}`)
+    navigate(ISSUES_PAGES.DETAIL(issueId))
     toast.dismiss(toastId)
-  }
-
-  function handleCopyLink() {
-    navigator.clipboard.writeText(`${window.location.origin}/issue/${issueId}`)
-  }
-
-  function handleCopyId() {
-    navigator.clipboard.writeText(issueKey)
-  }
-
-  function handleCopyBranch() {
-    navigator.clipboard.writeText(branchName)
   }
 
   return (
@@ -79,16 +70,21 @@ export function IssueCreatedToast({
           View issue
         </button>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon-sm" onClick={handleCopyLink} title="Copy link">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => copy(`${window.location.origin}${ISSUES_PAGES.DETAIL(issueId)}`)}
+            title="Copy link"
+          >
             <HugeiconsIcon icon={Link01Icon} size={14} strokeWidth={2} />
           </Button>
-          <Button variant="ghost" size="icon-sm" onClick={handleCopyId} title="Copy ID">
+          <Button variant="ghost" size="icon-sm" onClick={() => copy(issueKey)} title="Copy ID">
             <HugeiconsIcon icon={Copy01Icon} size={14} strokeWidth={2} />
           </Button>
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={handleCopyBranch}
+            onClick={() => copy(branchName)}
             title="Copy branch name"
           >
             <HugeiconsIcon icon={GitBranchIcon} size={14} strokeWidth={2} />

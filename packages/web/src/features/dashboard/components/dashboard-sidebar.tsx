@@ -1,8 +1,9 @@
 import { useCreateIssue } from '@/features/issues/stores/create-issue-store'
-import { useTeams, type Team } from '@/features/teams/hooks/use-teams'
+import TeamsSection from '@/features/dashboard/components/teams-section'
 import { PAGES } from '@/shared/constants/pages'
 import { useSidebar } from '@/shared/contexts/sidebar-context'
 import { authClient } from '@/shared/lib/auth-client'
+import { getInitials } from '@/shared/lib/format'
 import { useCommandMenu } from '@/shared/stores/command-menu-store'
 import {
   Avatar,
@@ -10,9 +11,6 @@ import {
   AvatarImage,
   Button,
   cn,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -26,168 +24,18 @@ import {
   DropdownMenuTrigger,
 } from '@curved/ui'
 import {
-  Add01Icon,
   ArrowDown01Icon,
-  CheckListIcon,
-  CopyLinkIcon,
-  CubeIcon,
-  FilterIcon,
   Logout03Icon,
-  MoreHorizontalIcon,
   PencilEdit02Icon,
   Search01Icon,
-  Settings01Icon,
   Task01Icon,
   Tick01Icon,
   UserGroupIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 const navItems = [{ to: PAGES.MY_ASSIGNED, label: 'My issues', icon: Task01Icon }]
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
-
-const teamNavItems = [
-  { suffix: '/issues', label: 'Issues', icon: CheckListIcon },
-  { suffix: '/projects', label: 'Projects', icon: CubeIcon },
-  { suffix: '/views', label: 'Views', icon: FilterIcon },
-]
-
-function TeamItem({ team }: { team: Team }) {
-  const [open, setOpen] = useState(true)
-
-  return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <div className="group/team flex items-center gap-0.5">
-        <CollapsibleTrigger className="text-sidebar-foreground/70 hover:text-sidebar-foreground flex min-w-0 flex-1 items-center gap-2 rounded-lg py-1 pl-2 transition-colors outline-none">
-          {team.icon ? (
-            <span className="shrink-0 text-sm">{team.icon}</span>
-          ) : (
-            <span className="bg-sidebar-accent flex size-5 shrink-0 items-center justify-center rounded text-[10px] font-medium">
-              {getInitials(team.name)}
-            </span>
-          )}
-          <span className="truncate text-sm">{team.name}</span>
-          <HugeiconsIcon
-            icon={ArrowDown01Icon}
-            size={12}
-            strokeWidth={1.5}
-            className={cn(
-              'text-sidebar-foreground/40 shrink-0 transition-transform duration-200',
-              !open && '-rotate-90',
-            )}
-          />
-        </CollapsibleTrigger>
-        <TeamActionsDropdown team={team} />
-      </div>
-      <CollapsibleContent>
-        <nav className="mt-0.5 flex flex-col gap-0.5 pl-3">
-          {teamNavItems.map((item) => (
-            <NavLink
-              key={item.suffix}
-              to={`/team/${team.identifier}${item.suffix}`}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-2.5 rounded-lg px-3 py-1 text-sm transition-colors',
-                  isActive
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
-                    : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground',
-                )
-              }
-            >
-              <HugeiconsIcon icon={item.icon} size={16} strokeWidth={1.5} />
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-      </CollapsibleContent>
-    </Collapsible>
-  )
-}
-
-function TeamActionsDropdown({ team }: { team: Team }) {
-  const navigate = useNavigate()
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-sidebar-foreground/40 hover:text-sidebar-foreground size-6 shrink-0 opacity-0 transition-opacity group-hover/team:opacity-100 data-[popup-open]:opacity-100"
-          />
-        }
-      >
-        <HugeiconsIcon icon={MoreHorizontalIcon} size={16} strokeWidth={1.5} />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="right" align="start" sideOffset={4} className="w-48">
-        <DropdownMenuItem
-          onClick={() => {
-            navigator.clipboard.writeText(`${window.location.origin}/team/${team.identifier}`)
-          }}
-        >
-          <HugeiconsIcon icon={CopyLinkIcon} size={16} strokeWidth={1.5} />
-          Copy link
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate(PAGES.SETTINGS(team.identifier))}>
-          <HugeiconsIcon icon={Settings01Icon} size={16} strokeWidth={1.5} />
-          Team settings
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}
-
-function TeamsSection() {
-  const navigate = useNavigate()
-  const [teamsOpen, setTeamsOpen] = useState(true)
-  const { data: teams } = useTeams()
-
-  return (
-    <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
-      <div className="flex items-center justify-between pl-2">
-        <CollapsibleTrigger className="hover:text-sidebar-foreground text-sidebar-foreground/50 flex items-center gap-1 py-1 text-xs font-medium transition-colors outline-none">
-          Your teams
-          <HugeiconsIcon
-            icon={ArrowDown01Icon}
-            size={12}
-            strokeWidth={2}
-            className={cn('transition-transform duration-200', !teamsOpen && '-rotate-90')}
-          />
-        </CollapsibleTrigger>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-sidebar-foreground/40 hover:text-sidebar-foreground size-5"
-          onClick={() => navigate(PAGES.NEW_TEAM)}
-        >
-          <HugeiconsIcon icon={Add01Icon} size={14} strokeWidth={2} />
-        </Button>
-      </div>
-      <CollapsibleContent>
-        <div className="mt-1 flex flex-col gap-2">
-          {teams?.map((team) => (
-            <TeamItem key={team.id} team={team} />
-          ))}
-          {teams?.length === 0 && (
-            <p className="text-sidebar-foreground/40 px-3 py-1 text-xs">No teams yet</p>
-          )}
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
-  )
-}
 
 export function DashboardSidebar() {
   const navigate = useNavigate()

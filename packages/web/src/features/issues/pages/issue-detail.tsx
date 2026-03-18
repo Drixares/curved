@@ -1,15 +1,9 @@
-import { Button, Separator } from '@curved/ui'
-import { Copy01Icon, Link01Icon } from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
+import { Separator } from '@curved/ui'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import ActivitySection from '@/features/issues/components/activity-section'
-import { AssigneeChip } from '@/features/issues/components/assignee-chip'
-import { LabelsChip } from '@/features/issues/components/labels-chip'
-import { PriorityChip } from '@/features/issues/components/priority-chip'
-import { ProjectChip } from '@/features/issues/components/project-chip'
-import { StatusChip } from '@/features/issues/components/status-chip'
+import IssueSidebar from '@/features/issues/components/issue-sidebar'
 import { useIssue } from '@/features/issues/hooks/use-issue'
 import { useTeamLabels } from '@/features/issues/hooks/use-team-labels'
 import { useTeamMembers } from '@/features/issues/hooks/use-team-members'
@@ -69,10 +63,6 @@ export default function IssueDetail() {
   }
 
   const identifier = `${issue.team.identifier}-${issue.number}`
-
-  function copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text)
-  }
 
   function saveTitle() {
     const trimmed = titleValue.trim()
@@ -141,90 +131,22 @@ export default function IssueDetail() {
         <ActivitySection issueId={issue.id} creator={issue.creator} createdAt={issue.createdAt} />
       </div>
 
-      {/* Right: properties sidebar */}
-      <div className="w-[300px] overflow-y-auto border-l">
-        {/* Action buttons */}
-        <div className="flex items-center gap-1 border-b px-4 py-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => copyToClipboard(identifier)}
-            title="Copy issue ID"
-          >
-            <HugeiconsIcon icon={Copy01Icon} className="size-4" />
-            <span className="ml-1 text-xs">Copy ID</span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => copyToClipboard(window.location.href)}
-            title="Copy link"
-          >
-            <HugeiconsIcon icon={Link01Icon} className="size-4" />
-            <span className="ml-1 text-xs">Copy link</span>
-          </Button>
-        </div>
-
-        {/* Properties */}
-        <div className="space-y-4 p-4">
-          {/* Status */}
-          <div>
-            <p className="text-muted-foreground mb-1 text-xs font-medium">Status</p>
-            <StatusChip
-              statuses={statuses}
-              currentStatus={currentStatus}
-              onSelect={(statusId) => updateIssue({ statusId })}
-            />
-          </div>
-
-          {/* Priority */}
-          <div>
-            <p className="text-muted-foreground mb-1 text-xs font-medium">Priority</p>
-            <PriorityChip
-              priority={issue.priority}
-              onSelect={(priority) => updateIssue({ priority })}
-            />
-          </div>
-
-          {/* Assignee */}
-          <div>
-            <p className="text-muted-foreground mb-1 text-xs font-medium">Assignee</p>
-            <AssigneeChip
-              members={members}
-              currentAssignee={currentAssignee}
-              onSelect={(assigneeId) => updateIssue({ assigneeId })}
-            />
-          </div>
-
-          {/* Labels */}
-          <div>
-            <p className="text-muted-foreground mb-1 text-xs font-medium">Labels</p>
-            <LabelsChip
-              labels={labels}
-              selectedIds={selectedLabelIds}
-              onToggle={(labelId) => {
-                const newIds = selectedLabelIds.includes(labelId)
-                  ? selectedLabelIds.filter((id) => id !== labelId)
-                  : [...selectedLabelIds, labelId]
-                updateIssue({ labelIds: newIds })
-              }}
-            />
-          </div>
-
-          {/* Project */}
-          <div>
-            <p className="text-muted-foreground mb-1 text-xs font-medium">Project</p>
-            <ProjectChip
-              projects={projects}
-              currentProject={
-                issue.project ? (projects.find((p) => p.id === issue.project!.id) ?? null) : null
-              }
-              teamId={issue.team.id}
-              onSelect={(projectId) => updateIssue({ projectId })}
-            />
-          </div>
-        </div>
-      </div>
+      <IssueSidebar
+        identifier={identifier}
+        statuses={statuses}
+        currentStatus={currentStatus}
+        priority={issue.priority}
+        members={members}
+        currentAssignee={currentAssignee}
+        labels={labels}
+        selectedLabelIds={selectedLabelIds}
+        projects={projects}
+        currentProject={
+          issue.project ? (projects.find((p) => p.id === issue.project!.id) ?? null) : null
+        }
+        teamId={issue.team.id}
+        onUpdate={(fields) => updateIssue(fields)}
+      />
     </div>
   )
 }

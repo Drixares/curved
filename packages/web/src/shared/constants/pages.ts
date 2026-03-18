@@ -36,6 +36,7 @@ export const PAGES = {
   ...AUTH_PAGES,
   ...ISSUES_PAGES,
   ...TEAM_PAGES,
+  ...PROJECT_PAGES,
   ...ORGANIZATION_PAGES,
   ...SETTINGS_PAGES,
 }
