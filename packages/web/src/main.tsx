@@ -30,6 +30,7 @@ const TeamIssues = lazy(() => import('./features/issues/pages/team-issues'))
 const TeamProjects = lazy(() => import('./features/teams/pages/team-projects'))
 const TeamViews = lazy(() => import('./features/teams/pages/team-views'))
 const TeamSettings = lazy(() => import('./features/teams/pages/team-settings'))
+const ProjectDetail = lazy(() => import('./features/projects/pages/project-detail'))
 
 function Loading() {
   return (
@@ -59,6 +60,7 @@ createRoot(document.getElementById('root')!).render(
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/my-issues/assigned" element={<Issues />} />
                   <Route path="/issue/:issueId" element={<IssueDetail />} />
+                  <Route path="/project/:projectId" element={<ProjectDetail />} />
                   <Route path="/team/:teamIdentifier/issues" element={<TeamIssues />} />
                   <Route path="/team/:teamIdentifier/projects" element={<TeamProjects />} />
                   <Route path="/team/:teamIdentifier/views" element={<TeamViews />} />

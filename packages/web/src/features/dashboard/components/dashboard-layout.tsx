@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import { CommandMenu } from '@/shared/components/command-menu'
 import { ContentHeader } from './content-header'
 import { CreateIssueDialog } from '@/features/issues/components/create-issue-dialog'
+import { CreateProjectDialog } from '@/features/projects/components/create-project-dialog'
 import { DashboardSidebar } from './dashboard-sidebar'
 
 function DashboardLayoutContent() {
@@ -29,6 +30,7 @@ function DashboardLayoutContent() {
 
       <CommandMenu />
       <CreateIssueDialog />
+      <CreateProjectDialog />
     </div>
   )
 }

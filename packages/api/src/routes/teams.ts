@@ -2,7 +2,7 @@ import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { validator } from 'hono/validator'
 import { db } from '../db'
-import { issue, label, status, team, teamMember } from '../db/schema'
+import { issue, label, project, status, team, teamMember } from '../db/schema'
 import type { AuthVariables } from '../middleware/auth'
 
 export const teamRoutes = new Hono<{ Variables: AuthVariables }>()
@@ -191,6 +191,49 @@ export const teamRoutes = new Hono<{ Variables: AuthVariables }>()
       labels: i.labels.map((il) => il.label),
       createdAt: i.createdAt,
       updatedAt: i.updatedAt,
+    }))
+
+    return c.json(result)
+  })
+  .get('/:teamId/projects', async (c) => {
+    const session = c.get('session')
+    const orgId = session.activeOrganizationId
+    const { teamId } = c.req.param()
+
+    if (!orgId) {
+      return c.json({ error: 'No active organization' }, 400)
+    }
+
+    const foundTeam = await db.query.team.findFirst({
+      where: and(eq(team.id, teamId), eq(team.organizationId, orgId)),
+      columns: { id: true, identifier: true },
+    })
+
+    if (!foundTeam) {
+      return c.json({ error: 'Team not found' }, 404)
+    }
+
+    const projects = await db.query.project.findMany({
+      where: and(eq(project.teamId, teamId), isNull(project.deletedAt)),
+      with: {
+        lead: {
+          columns: { id: true, name: true, image: true },
+        },
+      },
+      orderBy: (project, { desc }) => [desc(project.createdAt)],
+    })
+
+    const result = projects.map((p) => ({
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      status: p.status,
+      priority: p.priority,
+      lead: p.lead,
+      startDate: p.startDate,
+      targetDate: p.targetDate,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
     }))
 
     return c.json(result)

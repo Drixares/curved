@@ -1,5 +1,6 @@
 import { useCommandMenu } from '@/shared/stores/command-menu-store'
 import { useCreateIssue } from '@/features/issues/stores/create-issue-store'
+import { useCreateProject } from '@/features/projects/stores/create-project-store'
 import {
   Command,
   CommandDialog,
@@ -37,6 +38,7 @@ export function CommandMenu() {
   const navigate = useNavigate()
   const { isOpen, close, toggle } = useCommandMenu()
   const openCreateIssue = useCreateIssue((s) => s.open)
+  const openCreateProject = useCreateProject((s) => s.open)
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -58,6 +60,8 @@ export function CommandMenu() {
   function handleAction(id: string) {
     if (id === 'create-issue') {
       openCreateIssue()
+    } else if (id === 'create-project') {
+      openCreateProject()
     }
     close()
   }

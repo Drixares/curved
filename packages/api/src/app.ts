@@ -7,6 +7,7 @@ import { invitationRoutes } from './routes/invitations'
 import { teamRoutes } from './routes/teams'
 import { issueRoutes } from './routes/issues'
 import { myIssueRoutes } from './routes/my-issues'
+import { projectRoutes } from './routes/projects'
 import { organizationRoutes } from './routes/organization'
 import { adminRoutes } from './routes/admin'
 
@@ -41,6 +42,7 @@ const routes = app
   .use('/api/organizations/:orgId/*', orgMemberMiddleware)
   .route('/api/teams', teamRoutes)
   .route('/api/issues', issueRoutes)
+  .route('/api/projects', projectRoutes)
   .route('/api/my-issues', myIssueRoutes)
   .route('/api/organization', organizationRoutes)
 
