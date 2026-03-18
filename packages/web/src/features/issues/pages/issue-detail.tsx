@@ -8,12 +8,14 @@ import ActivitySection from '@/features/issues/components/activity-section'
 import { AssigneeChip } from '@/features/issues/components/assignee-chip'
 import { LabelsChip } from '@/features/issues/components/labels-chip'
 import { PriorityChip } from '@/features/issues/components/priority-chip'
+import { ProjectChip } from '@/features/issues/components/project-chip'
 import { StatusChip } from '@/features/issues/components/status-chip'
 import { useIssue } from '@/features/issues/hooks/use-issue'
 import { useTeamLabels } from '@/features/issues/hooks/use-team-labels'
 import { useTeamMembers } from '@/features/issues/hooks/use-team-members'
 import { useTeamStatuses } from '@/features/issues/hooks/use-team-statuses'
 import { useUpdateIssue } from '@/features/issues/hooks/use-update-issue'
+import { useTeamProjects } from '@/features/projects/hooks/use-team-projects'
 import { PAGES } from '@/shared/constants/pages'
 
 export default function IssueDetail() {
@@ -24,6 +26,7 @@ export default function IssueDetail() {
   const { data: members = [] } = useTeamMembers(issue?.team.id ?? null)
   const { data: statuses = [] } = useTeamStatuses(issue?.team.id ?? null)
   const { data: labels = [] } = useTeamLabels(issue?.team.id ?? null)
+  const { data: projects = [] } = useTeamProjects(issue?.team.id ?? undefined)
 
   const [titleValue, setTitleValue] = useState('')
   const titleRef = useRef<HTMLInputElement>(null)
@@ -78,7 +81,6 @@ export default function IssueDetail() {
     } else {
       setTitleValue(issue!.title)
     }
-    setEditingTitle(false)
   }
 
   function saveDescription() {
@@ -87,7 +89,6 @@ export default function IssueDetail() {
     if (trimmed !== current) {
       updateIssue({ description: trimmed || null })
     }
-    setEditingDescription(false)
   }
 
   const currentStatus = statuses.find((s) => s.id === issue.status.id) ?? null
@@ -211,12 +212,17 @@ export default function IssueDetail() {
           </div>
 
           {/* Project */}
-          {issue.project && (
-            <div>
-              <p className="text-muted-foreground mb-1 text-xs font-medium">Project</p>
-              <p className="text-sm">{issue.project.name}</p>
-            </div>
-          )}
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs font-medium">Project</p>
+            <ProjectChip
+              projects={projects}
+              currentProject={
+                issue.project ? (projects.find((p) => p.id === issue.project!.id) ?? null) : null
+              }
+              teamId={issue.team.id}
+              onSelect={(projectId) => updateIssue({ projectId })}
+            />
+          </div>
         </div>
       </div>
     </div>

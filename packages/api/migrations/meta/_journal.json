@@ -43,6 +43,13 @@
       "when": 1773829963388,
       "tag": "0005_bitter_white_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1773834466599,
+      "tag": "0006_solid_jetstream",
+      "breakpoints": true
     }
   ]
 }

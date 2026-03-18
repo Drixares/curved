@@ -7,6 +7,7 @@ import {
   Link01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { slugify } from '@/shared/lib/slugify'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -16,13 +17,6 @@ interface IssueCreatedToastProps {
   number: number
   title: string
   issueId: string
-}
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
 }
 
 export function IssueCreatedToast({
@@ -55,7 +49,7 @@ export function IssueCreatedToast({
   }
 
   return (
-    <div className="bg-background border-border w-[360px] rounded-lg border p-3 shadow-lg">
+    <div className="bg-sidebar border-border w-90 rounded-lg border p-3 shadow-lg">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <HugeiconsIcon

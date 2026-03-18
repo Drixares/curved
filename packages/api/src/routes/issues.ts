@@ -79,6 +79,7 @@ export const issueRoutes = new Hono<{ Variables: AuthVariables }>()
         statusId?: string
         priority?: string
         assigneeId?: string
+        projectId?: string | null
         labelIds?: string[]
       }
       if (!body.title?.trim() || !body.teamId) {
@@ -91,6 +92,7 @@ export const issueRoutes = new Hono<{ Variables: AuthVariables }>()
         statusId: body.statusId,
         priority: body.priority,
         assigneeId: body.assigneeId,
+        projectId: body.projectId,
         labelIds: body.labelIds,
       }
     }),
@@ -147,6 +149,7 @@ export const issueRoutes = new Hono<{ Variables: AuthVariables }>()
         statusId,
         priority: body.priority || 'none',
         teamId: body.teamId,
+        projectId: body.projectId || null,
         assigneeId: body.assigneeId || null,
         creatorId: userId,
       })
@@ -182,6 +185,7 @@ export const issueRoutes = new Hono<{ Variables: AuthVariables }>()
         statusId?: string
         priority?: string
         assigneeId?: string | null
+        projectId?: string | null
         labelIds?: string[]
       }
       return body
@@ -216,6 +220,7 @@ export const issueRoutes = new Hono<{ Variables: AuthVariables }>()
       if (body.statusId !== undefined) updates.statusId = body.statusId
       if (body.priority !== undefined) updates.priority = body.priority
       if ('assigneeId' in body) updates.assigneeId = body.assigneeId || null
+      if ('projectId' in body) updates.projectId = body.projectId || null
 
       if (Object.keys(updates).length > 0) {
         await db.update(issue).set(updates).where(eq(issue.id, issueId))

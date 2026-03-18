@@ -7,6 +7,7 @@ type UpdateIssuePayload = {
   statusId?: string
   priority?: string
   assigneeId?: string | null
+  projectId?: string | null
   labelIds?: string[]
 }
 

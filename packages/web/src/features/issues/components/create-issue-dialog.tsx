@@ -3,6 +3,7 @@ import { useTeamLabels } from '@/features/issues/hooks/use-team-labels'
 import { useTeamMembers } from '@/features/issues/hooks/use-team-members'
 import { useTeamStatuses } from '@/features/issues/hooks/use-team-statuses'
 import { useCreateIssue } from '@/features/issues/stores/create-issue-store'
+import { useTeamProjects } from '@/features/projects/hooks/use-team-projects'
 import { useTeams } from '@/features/teams/hooks/use-teams'
 import { useKeyboardShortcuts } from '@/shared/hooks/use-keyboard-shortcurts'
 import { Button, Dialog, DialogContent, DialogTitle, Label, Switch } from '@curved/ui'
@@ -17,6 +18,7 @@ import { AssigneeChip } from './assignee-chip'
 import { IssueCreatedToast } from './issue-created-toast'
 import { LabelsChip } from './labels-chip'
 import { PriorityChip } from './priority-chip'
+import { ProjectChip } from './project-chip'
 import { StatusChip } from './status-chip'
 import { TeamSelector } from './team-selector'
 
@@ -27,6 +29,7 @@ const createIssueSchema = z.object({
   statusId: z.string().optional(),
   priority: z.string(),
   assigneeId: z.string().optional(),
+  projectId: z.string().optional(),
   labelIds: z.array(z.string()),
 })
 
@@ -46,6 +49,7 @@ export function CreateIssueDialog() {
       statusId: undefined,
       priority: 'none',
       assigneeId: undefined,
+      projectId: undefined,
       labelIds: [],
     },
   })
@@ -54,6 +58,7 @@ export function CreateIssueDialog() {
   const statusId = form.watch('statusId')
   const priority = form.watch('priority')
   const assigneeId = form.watch('assigneeId')
+  const projectId = form.watch('projectId')
   const labelIds = form.watch('labelIds')
   const [createMore, setCreateMore] = useState(false)
 
@@ -67,10 +72,12 @@ export function CreateIssueDialog() {
   const { data: statuses } = useTeamStatuses(teamId || null)
   const { data: labels } = useTeamLabels(teamId || null)
   const { data: members } = useTeamMembers(teamId || null)
+  const { data: projects } = useTeamProjects(teamId || undefined)
 
   // Current status / assignee objects
   const currentStatus = statuses?.find((s) => s.id === statusId) ?? null
   const currentAssignee = members?.find((m) => m.id === assigneeId) ?? null
+  const currentProject = projects?.find((p) => p.id === projectId) ?? null
 
   // Global shortcut: C to open create issue dialog
   useKeyboardShortcuts([{ key: 'c', action: () => open() }], { enabled: !isOpen })
@@ -107,6 +114,7 @@ export function CreateIssueDialog() {
         statusId: values.statusId ?? undefined,
         priority: values.priority,
         assigneeId: values.assigneeId ?? undefined,
+        projectId: values.projectId ?? undefined,
         labelIds: values.labelIds.length > 0 ? values.labelIds : undefined,
       },
       {
@@ -119,6 +127,7 @@ export function CreateIssueDialog() {
               statusId: undefined,
               priority: 'none',
               assigneeId: undefined,
+              projectId: undefined,
               labelIds: [],
             })
             titleRef.current?.focus()
@@ -177,6 +186,7 @@ export function CreateIssueDialog() {
                 form.setValue('teamId', id)
                 form.setValue('statusId', undefined)
                 form.setValue('assigneeId', undefined)
+                form.setValue('projectId', undefined)
                 form.setValue('labelIds', [])
               }}
             />
@@ -237,6 +247,12 @@ export function CreateIssueDialog() {
                 current.includes(id) ? current.filter((l) => l !== id) : [...current, id],
               )
             }}
+          />
+          <ProjectChip
+            projects={projects ?? []}
+            currentProject={currentProject}
+            teamId={teamId || undefined}
+            onSelect={(id) => form.setValue('projectId', id ?? undefined)}
           />
         </div>
 
