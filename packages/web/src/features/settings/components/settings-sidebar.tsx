@@ -35,7 +35,7 @@ export function SettingsSidebar() {
             variant="ghost"
             size="sm"
             className="text-sidebar-foreground/60 hover:text-sidebar-foreground gap-1.5"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/my-issues/assigned')}
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} strokeWidth={2} />
             Back to app

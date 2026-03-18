@@ -1,5 +1,8 @@
 import { authClient } from '@/shared/lib/auth-client'
-import { Avatar, AvatarFallback, AvatarImage, Input, Label } from '@curved/ui'
+import { ChangeEmailDialog } from '@/features/settings/components/change-email-dialog'
+import { PencilEdit02Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Avatar, AvatarFallback, AvatarImage, Button, Input, Label } from '@curved/ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -17,6 +20,7 @@ export default function ProfileSettings() {
 
   const [name, setName] = useState('')
   const [image, setImage] = useState('')
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false)
   const initialized = useRef(false)
   const debounceTimer = useRef<ReturnType<typeof setTimeout>>(null)
 
@@ -83,12 +87,21 @@ export default function ProfileSettings() {
 
         <div className="grid gap-1.5">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" value={user.email} disabled />
-          <p className="text-muted-foreground text-xs">
-            Your email address cannot be changed here.
-          </p>
+          <div className="flex items-center gap-2">
+            <Input id="email" type="email" value={user.email} disabled className="flex-1" />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setEmailDialogOpen(true)}
+              aria-label="Change email"
+            >
+              <HugeiconsIcon icon={PencilEdit02Icon} className="size-4" />
+            </Button>
+          </div>
         </div>
       </div>
+
+      <ChangeEmailDialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen} />
     </div>
   )
 }

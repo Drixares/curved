@@ -1,38 +1,49 @@
 import { useParams, Link } from 'react-router-dom'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { Copy01Icon, Link01Icon, ArrowLeft01Icon } from '@hugeicons/core-free-icons'
-import { Avatar, AvatarImage, AvatarFallback, Badge, Button, Separator } from '@curved/ui'
+import { Copy01Icon, Link01Icon } from '@hugeicons/core-free-icons'
+import { Button, Separator } from '@curved/ui'
+import { useRef, useEffect, useState } from 'react'
 
 import { useIssue } from '@/features/issues/hooks/use-issue'
-import { statusTypeIcons, priorities } from '@/features/issues/data/data'
-
-function formatRelativeTime(dateStr: string) {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMins = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMins / 60)
-  const diffDays = Math.floor(diffHours / 24)
-
-  if (diffMins < 1) return 'just now'
-  if (diffMins < 60) return `${diffMins}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays < 30) return `${diffDays}d ago`
-  return date.toLocaleDateString()
-}
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
+import { useUpdateIssue } from '@/features/issues/hooks/use-update-issue'
+import { useTeamMembers } from '@/features/issues/hooks/use-team-members'
+import { useTeamStatuses } from '@/features/issues/hooks/use-team-statuses'
+import { useTeamLabels } from '@/features/issues/hooks/use-team-labels'
+import { StatusChip } from '@/features/issues/components/status-chip'
+import { PriorityChip } from '@/features/issues/components/priority-chip'
+import { AssigneeChip } from '@/features/issues/components/assignee-chip'
+import { LabelsChip } from '@/features/issues/components/labels-chip'
+import ActivitySection from '@/features/issues/components/activity-section'
 
 export default function IssueDetail() {
   const { issueId } = useParams<{ issueId: string }>()
   const { data: issue, isLoading, error } = useIssue(issueId)
+  const { mutate: updateIssue } = useUpdateIssue(issueId!)
+
+  const { data: members = [] } = useTeamMembers(issue?.team.id ?? null)
+  const { data: statuses = [] } = useTeamStatuses(issue?.team.id ?? null)
+  const { data: labels = [] } = useTeamLabels(issue?.team.id ?? null)
+
+  const [titleValue, setTitleValue] = useState('')
+  const titleRef = useRef<HTMLInputElement>(null)
+
+  const [descriptionValue, setDescriptionValue] = useState('')
+  const descriptionRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (issue) {
+      setTitleValue(issue.title)
+      setDescriptionValue(issue.description ?? '')
+    }
+  }, [issue])
+
+  // Auto-resize description textarea
+  useEffect(() => {
+    if (descriptionRef.current) {
+      descriptionRef.current.style.height = 'auto'
+      descriptionRef.current.style.height = descriptionRef.current.scrollHeight + 'px'
+    }
+  }, [descriptionValue])
 
   if (isLoading) {
     return (
@@ -54,70 +65,78 @@ export default function IssueDetail() {
   }
 
   const identifier = `${issue.team.identifier}-${issue.number}`
-  const statusIcon = statusTypeIcons[issue.status.type]
-  const priority = priorities.find((p) => p.value === issue.priority)
 
   function copyToClipboard(text: string) {
     navigator.clipboard.writeText(text)
   }
 
+  function saveTitle() {
+    const trimmed = titleValue.trim()
+    if (trimmed && trimmed !== issue!.title) {
+      updateIssue({ title: trimmed })
+    } else {
+      setTitleValue(issue!.title)
+    }
+    setEditingTitle(false)
+  }
+
+  function saveDescription() {
+    const trimmed = descriptionValue.trim()
+    const current = issue!.description ?? ''
+    if (trimmed !== current) {
+      updateIssue({ description: trimmed || null })
+    }
+    setEditingDescription(false)
+  }
+
+  const currentStatus = statuses.find((s) => s.id === issue.status.id) ?? null
+  const currentAssignee = issue.assignee
+    ? (members.find((m) => m.id === issue.assignee!.id) ?? null)
+    : null
+  const selectedLabelIds = issue.labels.map((l) => l.id)
+
   return (
     <div className="flex h-full">
       {/* Left: main content */}
       <div className="flex-1 overflow-y-auto p-8">
-        {/* Breadcrumb */}
-        <div className="mb-6 flex items-center gap-2 text-sm">
-          <Link
-            to="/my-issues/assigned"
-            className="text-muted-foreground hover:text-foreground flex items-center gap-1"
-          >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-            My Issues
-          </Link>
-          <span className="text-muted-foreground">/</span>
-          <span className="text-muted-foreground">{identifier}</span>
-        </div>
+        {/* Title - inline editable */}
+        <input
+          ref={titleRef}
+          value={titleValue}
+          placeholder="Issue title"
+          onChange={(e) => setTitleValue(e.target.value)}
+          onBlur={saveTitle}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') saveTitle()
+            if (e.key === 'Escape') {
+              setTitleValue(issue.title)
+              titleRef.current?.blur()
+            }
+          }}
+          className="placeholder:text-muted-foreground/50 mb-4 w-full cursor-text border-none bg-transparent text-2xl font-semibold tracking-tight outline-none"
+        />
 
-        {/* Title */}
-        <h1 className="mb-4 text-2xl font-semibold tracking-tight">{issue.title}</h1>
-
-        {/* Description */}
-        {issue.description ? (
-          <p className="text-muted-foreground mb-8 whitespace-pre-wrap">{issue.description}</p>
-        ) : (
-          <p className="text-muted-foreground/50 mb-8 italic">No description</p>
-        )}
+        {/* Description - inline editable */}
+        <textarea
+          ref={descriptionRef}
+          value={descriptionValue}
+          placeholder="Add a description..."
+          onChange={(e) => setDescriptionValue(e.target.value)}
+          onBlur={saveDescription}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setDescriptionValue(issue.description ?? '')
+              descriptionRef.current?.blur()
+            }
+          }}
+          className="text-muted-foreground placeholder:text-muted-foreground/50 mb-8 w-full cursor-text resize-none border-none bg-transparent outline-none placeholder:italic"
+          rows={1}
+        />
 
         <Separator className="mb-6" />
 
-        {/* Activity */}
-        <div className="mb-6">
-          <h2 className="mb-4 text-sm font-medium">Activity</h2>
-          <div className="flex items-start gap-3">
-            {issue.creator && (
-              <Avatar className="size-6">
-                {issue.creator.image && <AvatarImage src={issue.creator.image} />}
-                <AvatarFallback className="text-[10px]">
-                  {getInitials(issue.creator.name)}
-                </AvatarFallback>
-              </Avatar>
-            )}
-            <p className="text-muted-foreground text-sm">
-              <span className="text-foreground font-medium">{issue.creator.name}</span> created this
-              issue {formatRelativeTime(issue.createdAt)}
-            </p>
-          </div>
-        </div>
-
-        {/* Comment box placeholder */}
-        <div className="mt-6">
-          <textarea
-            placeholder="Leave a comment..."
-            className="border-input bg-background placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm"
-            rows={3}
-            disabled
-          />
-        </div>
+        {/* Activity + Comments */}
+        <ActivitySection issueId={issue.id} creator={issue.creator} createdAt={issue.createdAt} />
       </div>
 
       {/* Right: properties sidebar */}
@@ -149,64 +168,46 @@ export default function IssueDetail() {
           {/* Status */}
           <div>
             <p className="text-muted-foreground mb-1 text-xs font-medium">Status</p>
-            <div className="flex items-center gap-2 text-sm">
-              {statusIcon && (
-                <HugeiconsIcon
-                  icon={statusIcon}
-                  strokeWidth={2}
-                  className="text-muted-foreground size-4"
-                />
-              )}
-              <span>{issue.status.name}</span>
-            </div>
+            <StatusChip
+              statuses={statuses}
+              currentStatus={currentStatus}
+              onSelect={(statusId) => updateIssue({ statusId })}
+            />
           </div>
 
           {/* Priority */}
           <div>
             <p className="text-muted-foreground mb-1 text-xs font-medium">Priority</p>
-            <div className="flex items-center gap-2 text-sm">
-              {priority?.icon && (
-                <HugeiconsIcon
-                  icon={priority.icon}
-                  strokeWidth={2}
-                  className="text-muted-foreground size-4"
-                />
-              )}
-              <span>{priority?.label ?? issue.priority}</span>
-            </div>
+            <PriorityChip
+              priority={issue.priority}
+              onSelect={(priority) => updateIssue({ priority })}
+            />
           </div>
 
           {/* Assignee */}
           <div>
             <p className="text-muted-foreground mb-1 text-xs font-medium">Assignee</p>
-            {issue.assignee ? (
-              <div className="flex items-center gap-2 text-sm">
-                <Avatar className="size-5">
-                  {issue.assignee.image && <AvatarImage src={issue.assignee.image} />}
-                  <AvatarFallback className="text-[10px]">
-                    {getInitials(issue.assignee.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <span>{issue.assignee.name}</span>
-              </div>
-            ) : (
-              <p className="text-muted-foreground text-sm">Unassigned</p>
-            )}
+            <AssigneeChip
+              members={members}
+              currentAssignee={currentAssignee}
+              onSelect={(assigneeId) => updateIssue({ assigneeId })}
+            />
           </div>
 
           {/* Labels */}
-          {issue.labels.length > 0 && (
-            <div>
-              <p className="text-muted-foreground mb-1 text-xs font-medium">Labels</p>
-              <div className="flex flex-wrap gap-1">
-                {issue.labels.map((label) => (
-                  <Badge key={label.id} variant="outline">
-                    {label.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs font-medium">Labels</p>
+            <LabelsChip
+              labels={labels}
+              selectedIds={selectedLabelIds}
+              onToggle={(labelId) => {
+                const newIds = selectedLabelIds.includes(labelId)
+                  ? selectedLabelIds.filter((id) => id !== labelId)
+                  : [...selectedLabelIds, labelId]
+                updateIssue({ labelIds: newIds })
+              }}
+            />
+          </div>
 
           {/* Project */}
           {issue.project && (

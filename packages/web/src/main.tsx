@@ -1,6 +1,6 @@
 import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from '@curved/ui'
 import { queryClient } from './shared/lib/query-client'
@@ -14,7 +14,6 @@ const SignIn = lazy(() => import('./features/auth/pages/sign-in'))
 const SignUp = lazy(() => import('./features/auth/pages/sign-up'))
 const DashboardLayout = lazy(() => import('./features/dashboard/components/dashboard-layout'))
 const SettingsLayout = lazy(() => import('./features/settings/components/settings-layout'))
-const Dashboard = lazy(() => import('./features/dashboard/pages/dashboard'))
 const Issues = lazy(() => import('./features/issues/pages/issues'))
 const CreateOrganization = lazy(() => import('./features/organizations/pages/create-organization'))
 const CreateTeam = lazy(() => import('./features/teams/pages/create-team'))
@@ -57,7 +56,10 @@ createRoot(document.getElementById('root')!).render(
               <Route element={<ProtectedRoute />}>
                 <Route path="/create-organization" element={<CreateOrganization />} />
                 <Route element={<DashboardLayout />}>
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route
+                    path="/dashboard"
+                    element={<Navigate to="/my-issues/assigned" replace />}
+                  />
                   <Route path="/my-issues/assigned" element={<Issues />} />
                   <Route path="/issue/:issueId" element={<IssueDetail />} />
                   <Route path="/project/:projectId" element={<ProjectDetail />} />

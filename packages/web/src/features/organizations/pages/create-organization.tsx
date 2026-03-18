@@ -52,7 +52,7 @@ export default function CreateOrganization() {
   const { status: slugStatus, isChecking } = useCheckSlug(slug)
 
   if (organizations && organizations.length > 0) {
-    navigate('/dashboard')
+    navigate('/my-issues/assigned')
   }
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {

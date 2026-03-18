@@ -46,7 +46,7 @@ export default function SignIn() {
     if (error) {
       setServerError(error.message ?? 'An error occurred')
     } else {
-      navigate(searchParams.get('redirect') || '/dashboard')
+      navigate(searchParams.get('redirect') || '/my-issues/assigned')
     }
   }
 

@@ -9,6 +9,7 @@ import { issueRoutes } from './routes/issues'
 import { myIssueRoutes } from './routes/my-issues'
 import { projectRoutes } from './routes/projects'
 import { organizationRoutes } from './routes/organization'
+import { commentRoutes } from './routes/comments'
 import { adminRoutes } from './routes/admin'
 
 const DEFAULT_ORIGINS = ['http://localhost:5173', 'http://localhost:5174']
@@ -45,6 +46,7 @@ const routes = app
   .route('/api/projects', projectRoutes)
   .route('/api/my-issues', myIssueRoutes)
   .route('/api/organization', organizationRoutes)
+  .route('/api', commentRoutes)
 
 export { app }
 export type AppType = typeof routes

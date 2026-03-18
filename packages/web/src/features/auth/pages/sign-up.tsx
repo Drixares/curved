@@ -62,7 +62,7 @@ export default function SignUp() {
   const onSubmit = async (values: SignUpValues) => {
     setServerError('')
 
-    const redirectTo = searchParams.get('redirect') || '/dashboard'
+    const redirectTo = searchParams.get('redirect') || '/my-issues/assigned'
     const { error } = await authClient.signUp.email(values, {
       onSuccess: () => navigate(redirectTo),
       onError: (ctx) => {

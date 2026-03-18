@@ -50,6 +50,93 @@ export const projectRoutes = new Hono<{ Variables: AuthVariables }>()
       updatedAt: found.updatedAt,
     })
   })
+  .patch(
+    '/:projectId',
+    validator('json', (value, c) => {
+      const body = value as {
+        name?: string
+        description?: string | null
+        status?: string
+        priority?: string
+        leadId?: string | null
+        startDate?: string | null
+        targetDate?: string | null
+      }
+      // At least one field must be provided
+      if (
+        body.name === undefined &&
+        body.description === undefined &&
+        body.status === undefined &&
+        body.priority === undefined &&
+        body.leadId === undefined &&
+        body.startDate === undefined &&
+        body.targetDate === undefined
+      ) {
+        return c.json({ error: 'No fields to update' }, 400)
+      }
+      return body
+    }),
+    async (c) => {
+      const session = c.get('session')
+      const orgId = session.activeOrganizationId
+
+      if (!orgId) {
+        return c.json({ error: 'No active organization' }, 400)
+      }
+
+      const { projectId } = c.req.param()
+      const body = c.req.valid('json')
+
+      // Verify project exists and belongs to org
+      const found = await db.query.project.findFirst({
+        where: and(eq(project.id, projectId), isNull(project.deletedAt)),
+        with: {
+          team: { columns: { id: true, organizationId: true } },
+        },
+      })
+
+      if (!found || found.team.organizationId !== orgId) {
+        return c.json({ error: 'Project not found' }, 404)
+      }
+
+      // Build update object
+      const updates: Record<string, unknown> = {}
+      if (body.name !== undefined) updates.name = body.name.trim()
+      if (body.description !== undefined) updates.description = body.description?.trim() || null
+      if (body.status !== undefined) updates.status = body.status
+      if (body.priority !== undefined) updates.priority = body.priority
+      if (body.leadId !== undefined) updates.leadId = body.leadId || null
+      if (body.startDate !== undefined)
+        updates.startDate = body.startDate ? new Date(body.startDate) : null
+      if (body.targetDate !== undefined)
+        updates.targetDate = body.targetDate ? new Date(body.targetDate) : null
+
+      await db.update(project).set(updates).where(eq(project.id, projectId))
+
+      // Return updated project
+      const updated = await db.query.project.findFirst({
+        where: eq(project.id, projectId),
+        with: {
+          team: { columns: { id: true, identifier: true, organizationId: true } },
+          lead: { columns: { id: true, name: true, image: true } },
+        },
+      })
+
+      return c.json({
+        id: updated!.id,
+        name: updated!.name,
+        description: updated!.description,
+        status: updated!.status,
+        priority: updated!.priority,
+        team: { id: updated!.team.id, identifier: updated!.team.identifier },
+        lead: updated!.lead,
+        startDate: updated!.startDate,
+        targetDate: updated!.targetDate,
+        createdAt: updated!.createdAt,
+        updatedAt: updated!.updatedAt,
+      })
+    },
+  )
   .post(
     '/',
     validator('json', (value, c) => {

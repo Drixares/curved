@@ -37,7 +37,7 @@ const lastUsedBadgeClass =
 
 export default function SocialAuthButtons({ showLastUsed }: { showLastUsed?: boolean }) {
   const lastMethod = showLastUsed ? authClient.getLastUsedLoginMethod() : null
-  const callbackURL = `${window.location.origin}/dashboard`
+  const callbackURL = `${window.location.origin}/my-issues/assigned`
 
   const handleSocial = async (provider: 'google' | 'github') => {
     await authClient.signIn.social({ provider, callbackURL })

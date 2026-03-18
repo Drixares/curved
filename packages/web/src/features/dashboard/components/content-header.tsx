@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom'
 import { useTeams } from '@/features/teams/hooks/use-teams'
+import { useIssue } from '@/features/issues/hooks/use-issue'
 
 function getInitials(name: string) {
   return name
@@ -11,13 +12,34 @@ function getInitials(name: string) {
 }
 
 const pageTitles: Record<string, string> = {
-  '/dashboard': 'Dashboard',
   '/my-issues/assigned': 'My Issues',
 }
 
 export function ContentHeader() {
   const { pathname } = useLocation()
   const { data: teams } = useTeams()
+
+  // Issue detail: /issue/:issueId
+  const issueMatch = pathname.match(/^\/issue\/([^/]+)/)
+  const issueId = issueMatch?.[1]
+  const { data: issue } = useIssue(issueId)
+
+  if (issueMatch && issue) {
+    const identifier = `${issue.team.identifier}-${issue.number}`
+    return (
+      <header className="border-border flex shrink-0 items-center gap-2 border-b px-5 pt-3.5 pb-2.5">
+        {issue.project && (
+          <>
+            <span className="text-muted-foreground text-sm">{issue.project.name}</span>
+            <span className="text-muted-foreground text-xs">›</span>
+          </>
+        )}
+        <span className="text-sm font-medium">
+          {identifier} {issue.title}
+        </span>
+      </header>
+    )
+  }
 
   // Team pages: /team/:identifier/*
   const teamMatch = pathname.match(/^\/team\/([^/]+)/)

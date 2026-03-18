@@ -4,6 +4,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { passkey } from '@better-auth/passkey'
 import { lastLoginMethod, organization } from 'better-auth/plugins'
 import { db } from '../db'
+import { ChangeEmailEmail } from '../emails/change-email'
 import { InvitationEmail } from '../emails/invitation-email'
 import { getUserOrganizations } from './auth-utils'
 import { resend } from './resend'
@@ -21,6 +22,28 @@ export const auth = betterAuth({
   }),
   baseURL: BASE_URL,
   trustedOrigins,
+  user: {
+    changeEmail: {
+      enabled: true,
+    },
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      const html = await render(ChangeEmailEmail({ url }))
+
+      void resend.emails
+        .send({
+          from: 'Curved <matteo@matteo-marchelli.com>',
+          to: user.email,
+          subject: 'Verify your new email address',
+          html,
+        })
+        .then(() => {
+          console.info('Change email verification sent to', user.email)
+        })
+        .catch(console.error)
+    },
+  },
   emailAndPassword: {
     enabled: true,
   },

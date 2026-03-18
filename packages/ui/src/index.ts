@@ -21,6 +21,7 @@ export {
   CardHeader,
   CardTitle,
 } from './components/ui/card'
+export { Calendar } from './components/ui/calendar'
 export { Checkbox } from './components/ui/checkbox'
 export { Collapsible, CollapsibleContent, CollapsibleTrigger } from './components/ui/collapsible'
 export {

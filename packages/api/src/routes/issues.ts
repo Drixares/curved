@@ -173,3 +173,71 @@ export const issueRoutes = new Hono<{ Variables: AuthVariables }>()
       )
     },
   )
+  .patch(
+    '/:issueId',
+    validator('json', (value) => {
+      const body = value as {
+        title?: string
+        description?: string | null
+        statusId?: string
+        priority?: string
+        assigneeId?: string | null
+        labelIds?: string[]
+      }
+      return body
+    }),
+    async (c) => {
+      const session = c.get('session')
+      const orgId = session.activeOrganizationId
+
+      if (!orgId) {
+        return c.json({ error: 'No active organization' }, 400)
+      }
+
+      const { issueId } = c.req.param()
+      const body = c.req.valid('json')
+
+      // Verify the issue exists and belongs to the user's org
+      const found = await db.query.issue.findFirst({
+        where: and(eq(issue.id, issueId), isNull(issue.deletedAt)),
+        with: {
+          team: { columns: { organizationId: true } },
+        },
+      })
+
+      if (!found || found.team.organizationId !== orgId) {
+        return c.json({ error: 'Issue not found' }, 404)
+      }
+
+      // Build update object with only provided fields
+      const updates: Record<string, unknown> = {}
+      if (body.title !== undefined) updates.title = body.title.trim()
+      if (body.description !== undefined) updates.description = body.description?.trim() || null
+      if (body.statusId !== undefined) updates.statusId = body.statusId
+      if (body.priority !== undefined) updates.priority = body.priority
+      if ('assigneeId' in body) updates.assigneeId = body.assigneeId || null
+
+      if (Object.keys(updates).length > 0) {
+        await db.update(issue).set(updates).where(eq(issue.id, issueId))
+      }
+
+      // Handle labels if provided
+      if (body.labelIds !== undefined) {
+        // Remove all existing labels
+        await db.delete(issueLabel).where(eq(issueLabel.issueId, issueId))
+
+        // Insert new labels
+        if (body.labelIds.length > 0) {
+          await db.insert(issueLabel).values(
+            body.labelIds.map((labelId) => ({
+              id: crypto.randomUUID(),
+              issueId,
+              labelId,
+            })),
+          )
+        }
+      }
+
+      return c.json({ success: true })
+    },
+  )

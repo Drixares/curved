@@ -14,7 +14,6 @@ import {
 import {
   Add01Icon,
   ArrowMoveRightDownIcon,
-  Home09Icon,
   Settings01Icon,
   Task01Icon,
 } from '@hugeicons/core-free-icons'
@@ -23,7 +22,6 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const pages = [
-  { to: '/dashboard', label: 'Dashboard', icon: Home09Icon },
   { to: '/my-issues/assigned', label: 'My Issues', icon: Task01Icon },
   { to: '/settings', label: 'Settings', icon: Settings01Icon },
 ]

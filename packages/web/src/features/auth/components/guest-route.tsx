@@ -14,7 +14,7 @@ export default function GuestRoute() {
   }
 
   if (session) {
-    const redirect = searchParams.get('redirect') || '/dashboard'
+    const redirect = searchParams.get('redirect') || '/my-issues/assigned'
     return <Navigate to={redirect} replace />
   }
 

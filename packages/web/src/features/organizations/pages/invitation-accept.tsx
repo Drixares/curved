@@ -60,8 +60,8 @@ export default function InvitationAccept() {
           </CardHeader>
           <CardContent>
             {session ? (
-              <Button onClick={() => navigate('/dashboard')} className="w-full">
-                Go to dashboard
+              <Button onClick={() => navigate('/my-issues/assigned')} className="w-full">
+                Go to issues
               </Button>
             ) : (
               <Button render={<Link to="/sign-in" />} className="w-full">
@@ -85,7 +85,7 @@ export default function InvitationAccept() {
       setActionLoading(false)
     } else {
       await authClient.organization.setActive({ organizationId: invitation!.organization.id })
-      navigate('/dashboard')
+      navigate('/my-issues/assigned')
     }
   }
 
@@ -99,7 +99,7 @@ export default function InvitationAccept() {
       setActionError(error.message ?? 'Failed to decline invitation')
       setActionLoading(false)
     } else {
-      navigate('/dashboard')
+      navigate('/my-issues/assigned')
     }
   }
 

@@ -2,10 +2,10 @@
 
 ## Contexte
 
-- Application web de gestion de projet à concevoir et développer
-- Objectif : créer une première version fonctionnelle de la plateforme
-- L'application doit permettre à des équipes de collaborer sur des projets
-- Architecture cloud serverless obligatoire
+- Application web de gestion de projet a concevoir et developper
+- Objectif : creer une premiere version fonctionnelle de la plateforme
+- L'application doit permettre a des equipes de collaborer sur des projets
+- Le projet devra etre developpe avec une architecture cloud serverless
 
 ---
 
@@ -13,64 +13,64 @@
 
 ### Users
 
-- En tant qu'utilisateur, je peux créer un compte avec un email unique afin d'accéder à la plateforme.
-- En tant qu'utilisateur, je peux me connecter à mon compte afin d'accéder à mes équipes et mes projets.
-- En tant qu'utilisateur, je peux consulter mon profil afin de voir mes informations.
-- En tant qu'utilisateur, je peux modifier mon profil afin de mettre à jour mes informations.
+- [x] En tant qu'utilisateur, je peux creer un compte avec un email unique afin d'acceder a la plateforme.
+- [x] En tant qu'utilisateur, je peux me connecter a mon compte afin d'acceder a mes equipes et mes projets.
+- [x] En tant qu'utilisateur, je peux consulter mon profil afin de voir mes informations.
+- [x] En tant qu'utilisateur, je peux modifier mon profil afin de mettre a jour mes informations.
 
 ### Teams
 
-- En tant qu'utilisateur, je peux créer une équipe afin de collaborer avec d'autres utilisateurs.
-- En tant qu'utilisateur, je peux consulter les équipes auxquelles j'appartiens afin d'accéder à leurs projets.
-- En tant qu'utilisateur, je peux consulter les membres d'une équipe afin de savoir qui y participe.
+- [x] En tant qu'utilisateur, je peux creer une equipe afin de collaborer avec d'autres utilisateurs.
+- [x] En tant qu'utilisateur, je peux consulter les equipes auxquelles j'appartiens afin d'acceder a leurs projets.
+- [x] En tant qu'utilisateur, je peux consulter les membres d'une equipe afin de savoir qui y participe.
 
 ### Invitations
 
-- En tant que membre d'une équipe, je peux inviter un utilisateur à rejoindre l'équipe via son email afin de collaborer avec lui.
-- En tant qu'utilisateur, je peux consulter mes invitations à rejoindre des équipes.
-- En tant qu'utilisateur, je peux accepter une invitation afin de rejoindre l'équipe.
-- En tant qu'utilisateur, je peux refuser une invitation afin de ne pas rejoindre l'équipe.
+- [x] En tant que membre d'une equipe, je peux inviter un utilisateur a rejoindre l'equipe via son email afin de collaborer avec lui.
+- [x] En tant qu'utilisateur, je peux consulter mes invitations a rejoindre des equipes.
+- [x] En tant qu'utilisateur, je peux accepter une invitation afin de rejoindre l'equipe.
+- [x] En tant qu'utilisateur, je peux refuser une invitation afin de ne pas rejoindre l'equipe.
 
 ### Projects
 
-- En tant que membre d'une équipe, je peux créer un projet dans une équipe afin d'organiser le travail de cette équipe.
-- En tant qu'utilisateur, je peux consulter les projets d'une équipe.
-- En tant que membre d'une équipe, je peux consulter le détail d'un projet afin de voir ses tâches.
-- En tant que membre d'une équipe, je peux modifier un projet afin de mettre à jour ses informations.
-- En tant que membre d'une équipe, je peux supprimer un projet.
+- [x] En tant que membre d'une equipe, je peux creer un projet dans une equipe afin d'organiser le travail de cette equipe.
+- [x] En tant qu'utilisateur, je peux consulter les projets d'une equipe.
+- [x] En tant que membre d'une equipe, je peux consulter le detail d'un projet afin de voir ses taches.
+- [x] En tant que membre d'une equipe, je peux modifier un projet afin de mettre a jour ses informations.
+- [ ] En tant que membre d'une equipe, je peux supprimer un projet.
 
 ### Tasks
 
-- En tant que membre d'un projet, je peux créer une tâche dans un projet (nom, description, statut).
-- En tant que membre d'un projet, je peux consulter les tâches d'un projet.
-- En tant que membre d'un projet, je peux modifier une tâche.
-- En tant que membre d'un projet, je peux supprimer une tâche.
-- En tant que membre d'un projet, je peux assigner une tâche à un membre de l'équipe.
-- En tant que membre d'un projet, je peux changer le statut d'une tâche (todo / in progress / done).
+- [x] En tant que membre d'un projet, je peux creer une tache dans un projet (nom, description, statut).
+- [x] En tant que membre d'un projet, je peux consulter les taches d'un projet.
+- [x] En tant que membre d'un projet, je peux modifier une tache.
+- [ ] En tant que membre d'un projet, je peux supprimer une tache.
+- [x] En tant que membre d'un projet, je peux assigner une tache a un membre de l'equipe.
+- [x] En tant que membre d'un projet, je peux changer le statut d'une tache (todo / in progress / done).
 
 ### Assets
 
-- En tant que membre d'un projet, je peux uploader un fichier sur une tâche.
-- En tant que membre d'un projet, je peux consulter les fichiers liés à une tâche.
-- En tant que membre d'un projet, je peux supprimer un fichier lié à une tâche.
+- [ ] En tant que membre d'un projet, je peux uploader un fichier sur une tache.
+- [ ] En tant que membre d'un projet, je peux consulter les fichiers lies a une tache.
+- [ ] En tant que membre d'un projet, je peux supprimer un fichier lie a une tache.
 
 ---
 
 ## Espace Admin
 
-- Espace administrateur dédié, frontend séparé
+- Espace administrateur dedie, frontend separe
 - Accessible uniquement aux utilisateurs administrateurs
 
-### Fonctionnalités
+### Fonctionnalites
 
-- Se connecter
-- Consulter un dashboard avec statistiques globales (nombre total d'utilisateurs, d'équipes, de projets et de tâches)
-- Consulter tous les utilisateurs de la plateforme
+- [x] Se connecter
+- [x] Consulter un dashboard avec statistiques globales (nombre total d'utilisateurs, d'equipes, de projets et de taches)
+- [x] Consulter tous les utilisateurs de la plateforme
 
 ### Contraintes
 
-- Les routes doivent être protégées
-- Vérification que l'utilisateur possède le rôle admin
+- [x] Les routes doivent etre protegees
+- [x] Verification que l'utilisateur possede le role admin
 
 ---
 
@@ -78,15 +78,124 @@
 
 - Toute l'application doit utiliser JWT
 - Lors du login, l'API retourne un token JWT
-- Le token est envoyé dans les requêtes protégées
+- Le token est envoye dans les requetes protegees
 - Header attendu : `Authorization`
 - Le JWT doit contenir l'id du user et doit expirer
 
 ### Utilisation
 
-- Protéger les routes utilisateur
-- Protéger les routes admin
-- Identifier l'utilisateur connecté
+- [x] Proteger les routes utilisateur
+- [x] Proteger les routes admin
+- [x] Identifier l'utilisateur connecte
+
+---
+
+## Features supplementaires (Challenges)
+
+- [ ] Envoyer un mail d'invitation a une team via le service SES (+ var dynamique) — **Page SES separee, on garde Resend pour le reste**
+- [x] Creer un cron qui se lance toutes les heures pour faire un backup de la base de donnee dans un S3
+- [ ] Voir la liste des backups dans l'espace admin (date, heure, lien vers le fichier dans le S3)
+
+> Note : Le front n'est pas tres important (priorite backend/infra)
+
+---
+
+## Contraintes techniques supplementaires
+
+- [x] Reprendre la meme structure de repo que le cours dernier
+- [ ] ~~ORM interdit (script de migrations manuel)~~ — **On utilise Drizzle ORM**
+- [x] Tous les scripts de CI/CD doivent pouvoir etre lances en local
+- [x] Les lambdas hono doivent pouvoir se lancer en local sur un port du localhost
+- [ ] Il faut faire remonter des logs dans AWS CloudWatch
+- [ ] ~~Les donnees des users doivent etre detenu par le service Cognito~~ — **On garde better-auth**
+
+---
+
+## Structure de la base de donnees
+
+### Tables principales
+
+- users
+- teams
+- team_members
+- invitations
+- projects
+- tasks
+- assets
+- backups
+
+### Relations
+
+- Un user peut appartenir a plusieurs teams
+- Une team possede plusieurs members
+- Une team possede plusieurs projects
+- Un project appartient a une team
+- Un project possede plusieurs tasks
+- Une task peut etre assignee a un user
+- Une task peut contenir plusieurs assets
+- Une team peut envoyer plusieurs invitations
+
+### Contraintes importantes
+
+- users.email doit etre unique
+- Une invitation est liee a un email
+- Une task doit appartenir a un project
+- Un project doit appartenir a une team
+
+---
+
+## Endpoints API
+
+### Auth & Users
+
+- `POST /users` — Inscription
+- `POST /auth/login` — Connexion
+- `GET /me` — Profil utilisateur connecte
+- `PATCH /me` — Modifier profil
+
+### Teams
+
+- `POST /teams` — Creer une equipe
+- `GET /teams` — Lister mes equipes
+- `GET /teams/:teamId` — Detail d'une equipe
+- `GET /teams/:teamId/members` — Membres d'une equipe
+- `POST /teams/:teamId/invitations` — Inviter un membre
+
+### Invitations
+
+- `GET /invitations` — Mes invitations
+- `POST /invitations/:invitationId/accept` — Accepter
+- `POST /invitations/:invitationId/reject` — Refuser
+
+### Projects
+
+- `POST /teams/:teamId/projects` — Creer un projet
+- `GET /teams/:teamId/projects` — Lister les projets d'une equipe
+- `GET /projects/:projectId` — Detail d'un projet
+- `PATCH /projects/:projectId` — Modifier un projet
+- `DELETE /projects/:projectId` — Supprimer un projet
+
+### Tasks
+
+- `POST /projects/:projectId/tasks` — Creer une tache
+- `GET /projects/:projectId/tasks` — Lister les taches d'un projet
+- `GET /tasks/:taskId` — Detail d'une tache
+- `PATCH /tasks/:taskId` — Modifier une tache
+- `DELETE /tasks/:taskId` — Supprimer une tache
+- `PATCH /tasks/:taskId/assign` — Assigner une tache
+- `PATCH /tasks/:taskId/status` — Changer le statut
+
+### Assets
+
+- `POST /tasks/:taskId/assets` — Uploader un fichier
+- `GET /tasks/:taskId/assets` — Lister les fichiers
+- `DELETE /assets/:assetId` — Supprimer un fichier
+
+### Admin
+
+- `GET /admin/users` — Liste des utilisateurs
+- `GET /admin/stats` — Statistiques globales
+- `GET /admin/backups` — Liste des backups
 
 ---
 
@@ -96,16 +205,19 @@
 
 | Service            | Usage                                            |
 | ------------------ | ------------------------------------------------ |
-| Amazon S3          | Hébergement des frontends et stockage des assets |
+| Amazon S3          | Hebergement des frontends et stockage des assets |
 | Amazon CloudFront  | Distribution des frontends                       |
 | Amazon API Gateway | Exposition de l'API                              |
-| AWS Lambda         | Exécution de l'API                               |
-| Amazon RDS         | Base de données PostgreSQL                       |
+| AWS Lambda         | Execution de l'API et des crons                  |
+| Amazon RDS         | Base de donnees PostgreSQL                       |
+| Amazon SES         | Envoi de mails (page separee)                    |
+
+> **Choix projet** : On garde **better-auth** (pas Cognito) et **Resend** (SES en demo separee)
 
 ### CI/CD
 
-- GitHub
-- GitHub Actions
+- **GitHub** (pas GitLab)
+- **GitHub Actions**
 
 ### Environnements
 
@@ -114,30 +226,67 @@
 
 ### Frontend
 
-- Framework frontend libre (React, Vue, etc.)
-- CSS via Tailwind
+- React 19 + React Router 7
+- CSS via Tailwind 4
 
 ### Backend
 
 - Runtime : **Bun**
 - Framework HTTP : **Hono**
-- Authentification via JWT
-- API REST centralisée
+- ORM : **Drizzle**
+- Authentification via **better-auth** (JWT)
+- API REST centralisee
+
+---
+
+## Structure technique principale
+
+```
+packages/api          — API Hono + Lambda
+packages/crons        — Crons Lambda
+packages/web          — Frontend User (React)
+packages/admin        — Frontend Admin (React)
+packages/ui           — Composants UI partages
+infrastructure/scripts — Scripts de deploiement
+```
+
+### Scripts requis
+
+- [x] Script deploy **front** (web + admin)
+- [x] Script deploy **assets**
+- [x] Script de **migrations** de base de donnees
+- [x] Script deploy **api**
+- [x] Script deploy **crons**
+- [x] Dockerfile et Docker-compose avec la **stack complete** pour developper
+
+---
+
+## Guidage du projet (ordre conseille)
+
+1. [x] Creer le repository Git
+2. [x] Mettre en place l'infrastructure cloud
+3. [x] Creer les scripts requis dans /infrastructure/scripts
+4. [x] Mettre en place les environnements
+5. [x] Mettre en place les migrations de base de donnees
+6. [x] Mettre en place la CI/CD
+7. [x] Deploy une version vide de l'infrastructure
+8. [x] Developper l'API
+9. [x] Developper le Cron
+10. [x] Developper le Front User
+11. [x] Developper le Front Admin
 
 ---
 
 ## Rendu
 
-Par groupe de 3 maximum (1 dépôt par groupe est suffisant).
+Par groupe de 3 maximum (1 depot par groupe est suffisant).
 
-### À fournir
+### A fournir
 
 - Noms des membres du groupe
 - Lien du repository public sur GitHub
-- URL CloudFront Front User
-- URL CloudFront Front Admin
-- Lien d'une présentation vidéo de 10 min MAX par groupe pour montrer ce qui semble le plus pertinent
+- URLs CloudFront Front User **(stg et prd)**
+- URLs CloudFront Front Admin **(stg et prd)**
+- Screens AWS pour tous les services utilises
 
-### À déposer sur DVL
-
-> **ATTENTION** : Supprimer tous vos services AWS dans une semaine après le rendu (maintenir une liste avec tous les services actifs à supprimer).
+> **ATTENTION** : Supprimer tous vos services AWS dans une semaine apres le rendu (maintenir une liste avec tous les services actifs a supprimer).

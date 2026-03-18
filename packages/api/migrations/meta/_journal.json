@@ -36,6 +36,13 @@
       "when": 1773761194725,
       "tag": "0004_modern_dazzler",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1773829963388,
+      "tag": "0005_bitter_white_queen",
+      "breakpoints": true
     }
   ]
 }

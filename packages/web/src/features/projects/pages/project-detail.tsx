@@ -7,7 +7,6 @@ import {
   Edit02Icon,
   MoreHorizontalIcon,
   StarIcon,
-  UserAdd01Icon,
   UserIcon,
 } from '@hugeicons/core-free-icons'
 import {
@@ -19,39 +18,42 @@ import {
   TabsList,
   TabsTrigger,
 } from '@curved/ui'
+import { useCallback } from 'react'
 
 import { useProject } from '@/features/projects/hooks/use-project'
+import { useUpdateProjectMutation } from '@/features/projects/hooks/use-update-project'
 import {
   projectStatuses,
   projectPriorities,
   projectStatusIcons,
 } from '@/features/projects/data/data'
+import { StatusSelect } from '@/features/projects/components/status-select'
+import { PrioritySelect } from '@/features/projects/components/priority-select'
+import { LeadSelect } from '@/features/projects/components/lead-select'
+import { DateSelect } from '@/features/projects/components/date-select'
+import { InlineEditableText } from '@/features/projects/components/inline-editable-text'
+import { InlineEditableTextarea } from '@/features/projects/components/inline-editable-textarea'
+import ProjectSidebar from '@/features/projects/components/project-sidebar'
+import { useTeamMembers } from '@/features/issues/hooks/use-team-members'
 import { useTeams } from '@/features/teams/hooks/use-teams'
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
-
-function formatDate(dateStr: string | null | undefined) {
-  if (!dateStr) return null
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-}
-
-function formatActivityDate(dateStr: string) {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-}
+import { getInitials, formatDate } from '@/shared/lib/format'
 
 export default function ProjectDetail() {
   const { projectId } = useParams<{ projectId: string }>()
   const { data: project, isLoading, error } = useProject(projectId)
   const { data: teams } = useTeams()
+  const updateMutation = useUpdateProjectMutation()
+
+  const teamId = project?.team?.id ?? null
+  const { data: members } = useTeamMembers(teamId)
+
+  const update = useCallback(
+    (fields: Record<string, unknown>) => {
+      if (!projectId) return
+      updateMutation.mutate({ projectId, ...fields })
+    },
+    [projectId, updateMutation],
+  )
 
   if (isLoading) {
     return (
@@ -65,8 +67,8 @@ export default function ProjectDetail() {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2">
         <p className="text-muted-foreground">Project not found</p>
-        <Link to="/dashboard" className="text-sm underline">
-          Back to dashboard
+        <Link to="/my-issues/assigned" className="text-sm underline">
+          Back to issues
         </Link>
       </div>
     )
@@ -129,41 +131,87 @@ export default function ProjectDetail() {
               <HugeiconsIcon icon={CubeIcon} className="text-muted-foreground size-5" />
             </div>
 
-            {/* Title */}
-            <h1 className="mb-1 text-2xl font-bold tracking-tight">{project.name}</h1>
+            {/* Editable Title */}
+            <div className="mb-1">
+              <InlineEditableText
+                value={project.name}
+                placeholder="Project name"
+                onSave={(name) => update({ name })}
+                className="text-2xl font-bold tracking-tight"
+              />
+            </div>
+
+            {/* Editable Summary */}
             <p className="text-muted-foreground/50 mb-6 text-sm">Add a short summary...</p>
 
             {/* Inline properties */}
             <div className="mb-4 flex items-center gap-1 text-sm">
               <span className="text-muted-foreground mr-1 text-xs">Properties</span>
-              <button className="hover:bg-muted flex items-center gap-1.5 rounded px-2 py-1 transition-colors">
-                {statusIcon && (
-                  <HugeiconsIcon
-                    icon={statusIcon}
-                    className="text-muted-foreground size-3.5"
-                    strokeWidth={2}
-                  />
-                )}
-                <span>{status?.label ?? project.status}</span>
-              </button>
-              <button className="hover:bg-muted flex items-center gap-1.5 rounded px-2 py-1 transition-colors">
-                {priority?.icon && (
-                  <HugeiconsIcon
-                    icon={priority.icon}
-                    className="text-muted-foreground size-3.5"
-                    strokeWidth={2}
-                  />
-                )}
-                <span>{priority?.label ?? 'No priority'}</span>
-              </button>
-              <button className="hover:bg-muted text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 transition-colors">
-                <HugeiconsIcon icon={UserIcon} className="size-3.5" strokeWidth={2} />
-                <span>Lead</span>
-              </button>
-              <button className="hover:bg-muted text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 transition-colors">
-                <HugeiconsIcon icon={Calendar03Icon} className="size-3.5" strokeWidth={2} />
-                <span>Target date</span>
-              </button>
+
+              <StatusSelect status={project.status} onSelect={(val) => update({ status: val })}>
+                <button className="hover:bg-muted flex items-center gap-1.5 rounded px-2 py-1 transition-colors">
+                  {statusIcon && (
+                    <HugeiconsIcon
+                      icon={statusIcon}
+                      className="text-muted-foreground size-3.5"
+                      strokeWidth={2}
+                    />
+                  )}
+                  <span>{status?.label ?? project.status}</span>
+                </button>
+              </StatusSelect>
+
+              <PrioritySelect
+                priority={project.priority}
+                onSelect={(val) => update({ priority: val })}
+              >
+                <button className="hover:bg-muted flex items-center gap-1.5 rounded px-2 py-1 transition-colors">
+                  {priority?.icon && (
+                    <HugeiconsIcon
+                      icon={priority.icon}
+                      className="text-muted-foreground size-3.5"
+                      strokeWidth={2}
+                    />
+                  )}
+                  <span>{priority?.label ?? 'No priority'}</span>
+                </button>
+              </PrioritySelect>
+
+              <LeadSelect
+                members={members ?? []}
+                currentLeadId={project.lead?.id ?? null}
+                onSelect={(id) => update({ leadId: id })}
+              >
+                <button className="hover:bg-muted text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 transition-colors">
+                  {project.lead ? (
+                    <>
+                      <Avatar className="size-4">
+                        {project.lead.image && <AvatarImage src={project.lead.image} />}
+                        <AvatarFallback className="text-[8px]">
+                          {getInitials(project.lead.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-foreground">{project.lead.name}</span>
+                    </>
+                  ) : (
+                    <>
+                      <HugeiconsIcon icon={UserIcon} className="size-3.5" strokeWidth={2} />
+                      <span>Lead</span>
+                    </>
+                  )}
+                </button>
+              </LeadSelect>
+
+              <DateSelect
+                value={project.targetDate ? new Date(project.targetDate) : undefined}
+                onSelect={(date) => update({ targetDate: date ? date.toISOString() : null })}
+              >
+                <button className="hover:bg-muted text-muted-foreground flex items-center gap-1.5 rounded px-2 py-1 transition-colors">
+                  <HugeiconsIcon icon={Calendar03Icon} className="size-3.5" strokeWidth={2} />
+                  <span>{formatDate(project.targetDate) ?? 'Target date'}</span>
+                </button>
+              </DateSelect>
+
               {team && (
                 <button className="hover:bg-muted flex items-center gap-1.5 rounded px-2 py-1 transition-colors">
                   <HugeiconsIcon
@@ -196,16 +244,14 @@ export default function ProjectDetail() {
               <span className="text-muted-foreground text-sm">Write first project update</span>
             </button>
 
-            {/* Description */}
+            {/* Editable Description */}
             <div className="mb-8">
               <h2 className="text-muted-foreground mb-4 text-sm font-medium">Description</h2>
-              {project.description ? (
-                <div className="text-sm leading-relaxed whitespace-pre-wrap">
-                  {project.description}
-                </div>
-              ) : (
-                <p className="text-muted-foreground/50 text-sm italic">No description</p>
-              )}
+              <InlineEditableTextarea
+                value={project.description ?? ''}
+                placeholder="Add a description..."
+                onSave={(description) => update({ description: description || null })}
+              />
             </div>
 
             {/* Add milestone */}
@@ -217,155 +263,7 @@ export default function ProjectDetail() {
         </div>
 
         {/* Right sidebar */}
-        <div className="border-border w-[300px] shrink-0 overflow-y-auto border-l">
-          {/* Properties section */}
-          <div className="border-border border-b p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-medium">Properties</h3>
-              <button className="text-muted-foreground hover:text-foreground">
-                <HugeiconsIcon icon={Add01Icon} className="size-4" />
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              {/* Status */}
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-xs">Status</span>
-                <button className="hover:bg-muted flex items-center gap-1.5 rounded px-2 py-0.5 text-sm transition-colors">
-                  {statusIcon && (
-                    <HugeiconsIcon
-                      icon={statusIcon}
-                      className="text-muted-foreground size-3.5"
-                      strokeWidth={2}
-                    />
-                  )}
-                  {status?.label ?? project.status}
-                </button>
-              </div>
-
-              {/* Priority */}
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-xs">Priority</span>
-                <button className="hover:bg-muted flex items-center gap-1.5 rounded px-2 py-0.5 text-sm transition-colors">
-                  {priority?.icon && (
-                    <HugeiconsIcon
-                      icon={priority.icon}
-                      className="text-muted-foreground size-3.5"
-                      strokeWidth={2}
-                    />
-                  )}
-                  {priority?.label ?? 'No priority'}
-                </button>
-              </div>
-
-              {/* Lead */}
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-xs">Lead</span>
-                {project.lead ? (
-                  <button className="hover:bg-muted flex items-center gap-1.5 rounded px-2 py-0.5 text-sm transition-colors">
-                    <Avatar className="size-4">
-                      {project.lead.image && <AvatarImage src={project.lead.image} />}
-                      <AvatarFallback className="text-[8px]">
-                        {getInitials(project.lead.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    {project.lead.name}
-                  </button>
-                ) : (
-                  <button className="text-muted-foreground hover:bg-muted flex items-center gap-1.5 rounded px-2 py-0.5 text-sm transition-colors">
-                    <HugeiconsIcon icon={UserIcon} className="size-3.5" />
-                    Add lead
-                  </button>
-                )}
-              </div>
-
-              {/* Members */}
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-xs">Members</span>
-                <button className="text-muted-foreground hover:bg-muted flex items-center gap-1.5 rounded px-2 py-0.5 text-sm transition-colors">
-                  <HugeiconsIcon icon={UserAdd01Icon} className="size-3.5" />
-                  Add members
-                </button>
-              </div>
-
-              {/* Dates */}
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-xs">Dates</span>
-                <div className="flex items-center gap-1.5 text-sm">
-                  <button className="text-muted-foreground hover:bg-muted flex items-center gap-1 rounded px-2 py-0.5 transition-colors">
-                    <HugeiconsIcon icon={Calendar03Icon} className="size-3.5" />
-                    {formatDate(project.startDate) ?? 'Start'}
-                  </button>
-                  <span className="text-muted-foreground">&rarr;</span>
-                  <button className="text-muted-foreground hover:bg-muted flex items-center gap-1 rounded px-2 py-0.5 transition-colors">
-                    <HugeiconsIcon icon={Calendar03Icon} className="size-3.5" />
-                    {formatDate(project.targetDate) ?? 'Target'}
-                  </button>
-                </div>
-              </div>
-
-              {/* Teams */}
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-xs">Teams</span>
-                {team && (
-                  <Link
-                    to={`/team/${project.team.identifier}/projects`}
-                    className="hover:bg-muted flex items-center gap-1.5 rounded px-2 py-0.5 text-sm transition-colors"
-                  >
-                    <HugeiconsIcon icon={CubeIcon} className="text-muted-foreground size-3.5" />
-                    {team.name}
-                  </Link>
-                )}
-              </div>
-
-              {/* Labels */}
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-xs">Labels</span>
-                <button className="text-muted-foreground hover:bg-muted flex items-center gap-1.5 rounded px-2 py-0.5 text-sm transition-colors">
-                  <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
-                  Add label
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Milestones section */}
-          <div className="border-border border-b p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <h3 className="text-sm font-medium">Milestones</h3>
-              <button className="text-muted-foreground hover:text-foreground">
-                <HugeiconsIcon icon={Add01Icon} className="size-4" />
-              </button>
-            </div>
-            <p className="text-muted-foreground text-xs leading-relaxed">
-              Add milestones to organize work within your project and break it into more granular
-              stages.
-            </p>
-          </div>
-
-          {/* Activity section */}
-          <div className="p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-medium">Activity</h3>
-              <button className="text-muted-foreground hover:text-foreground text-xs">
-                See all
-              </button>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="bg-muted mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full">
-                <HugeiconsIcon icon={CubeIcon} className="text-muted-foreground size-3" />
-              </div>
-              <p className="text-muted-foreground text-xs">
-                {project.lead ? (
-                  <span className="text-foreground font-medium">{project.lead.name}</span>
-                ) : (
-                  <span className="text-foreground font-medium">Someone</span>
-                )}{' '}
-                created the project &middot; {formatActivityDate(project.createdAt)}
-              </p>
-            </div>
-          </div>
-        </div>
+        <ProjectSidebar project={project} team={team} members={members ?? []} onUpdate={update} />
       </div>
     </div>
   )

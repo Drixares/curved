@@ -31,7 +31,6 @@ import {
   CopyLinkIcon,
   CubeIcon,
   FilterIcon,
-  Home09Icon,
   Logout03Icon,
   MoreHorizontalIcon,
   PencilEdit02Icon,
@@ -45,10 +44,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
-const navItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: Home09Icon },
-  { to: '/my-issues/assigned', label: 'My issues', icon: Task01Icon },
-]
+const navItems = [{ to: '/my-issues/assigned', label: 'My issues', icon: Task01Icon }]
 
 function getInitials(name: string) {
   return name

@@ -71,7 +71,7 @@ export default function CreateTeam() {
     }
 
     await queryClient.invalidateQueries({ queryKey: ['teams', activeOrg?.id] })
-    navigate('/dashboard')
+    navigate('/my-issues/assigned')
   }
 
   return (
