@@ -8,7 +8,7 @@
     "dev": "mprocs",
     "dev:docker": "docker compose up --build",
     "build": "bun run --filter '*' build",
-    "checks": "prettier --check .",
+    "checks": "prettier --check . && tsc --noEmit -p packages/web && tsc --noEmit -p packages/api && tsc --noEmit -p packages/ui && tsc --noEmit -p packages/admin && tsc --noEmit -p packages/crons",
     "checks:fix": "prettier --write .",
     "start": "bun run --filter '@curved/api' start",
     "db:generate": "bun run --filter '@curved/api' db:generate",

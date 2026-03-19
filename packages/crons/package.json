@@ -12,6 +12,7 @@
     "postgres": "^3.4.8"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.161",
     "@types/bun": "latest"
   }
 }
