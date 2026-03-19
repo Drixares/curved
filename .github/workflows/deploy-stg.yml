@@ -53,7 +53,7 @@ jobs:
           echo "DATABASE_URL=${DB_URL}" >> $GITHUB_ENV
 
       - name: Run migrations
-        run: cd packages/api && bunx drizzle-kit migrate
+        run: cd packages/api && bun run db:migrate
 
   deploy-api:
     name: Deploy API to Lambda (STG)
