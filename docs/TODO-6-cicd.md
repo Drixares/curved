@@ -340,7 +340,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Package Lambda
         run: cd dist && zip -r ../lambda.zip .
@@ -348,13 +348,13 @@ jobs:
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code \
-            --function-name ${{ vars.LAMBDA_FUNCTION_API_STG }} \
+            --function-name ${{ secrets.LAMBDA_FUNCTION_API_STG }} \
             --zip-file fileb://lambda.zip
 
       - name: Wait for update
         run: |
           aws lambda wait function-updated \
-            --function-name ${{ vars.LAMBDA_FUNCTION_API_STG }}
+            --function-name ${{ secrets.LAMBDA_FUNCTION_API_STG }}
 
   deploy-web:
     name: Deploy Web to S3 (STG)
@@ -372,15 +372,15 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync to S3
-        run: aws s3 sync dist/ s3://${{ vars.S3_BUCKET_WEB_STG }} --delete
+        run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_WEB_STG }} --delete
 
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ vars.CF_DISTRIBUTION_WEB_STG }} \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_WEB_STG }} \
             --paths "/*"
 
   deploy-admin:
@@ -399,15 +399,15 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync to S3
-        run: aws s3 sync dist/ s3://${{ vars.S3_BUCKET_ADMIN_STG }} --delete
+        run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_ADMIN_STG }} --delete
 
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ vars.CF_DISTRIBUTION_ADMIN_STG }} \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_ADMIN_STG }} \
             --paths "/*"
 
   deploy-crons:
@@ -426,7 +426,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Package Lambda
         run: cd dist && zip -r ../lambda.zip .
@@ -434,13 +434,13 @@ jobs:
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code \
-            --function-name ${{ vars.LAMBDA_FUNCTION_CRON_STG }} \
+            --function-name ${{ secrets.LAMBDA_FUNCTION_CRON_STG }} \
             --zip-file fileb://lambda.zip
 
       - name: Wait for update
         run: |
           aws lambda wait function-updated \
-            --function-name ${{ vars.LAMBDA_FUNCTION_CRON_STG }}
+            --function-name ${{ secrets.LAMBDA_FUNCTION_CRON_STG }}
 
   deploy-assets:
     name: Deploy Assets to S3 (STG)
@@ -455,10 +455,10 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync assets to S3
-        run: aws s3 sync assets/ s3://${{ vars.S3_BUCKET_ASSETS_STG }} --delete
+        run: aws s3 sync assets/ s3://${{ secrets.S3_BUCKET_ASSETS_STG }} --delete
 
   migrate:
     name: Run DB Migrations (STG)
@@ -480,12 +480,12 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Get DATABASE_URL from Secrets Manager
         run: |
           DB_URL=$(aws secretsmanager get-secret-value \
-            --secret-id ${{ vars.SECRETS_MANAGER_STG }} \
+            --secret-id ${{ secrets.SECRETS_MANAGER_STG }} \
             --query 'SecretString' --output text | jq -r '.DATABASE_URL')
           echo "DATABASE_URL=${DB_URL}" >> $GITHUB_ENV
 
@@ -537,7 +537,7 @@ jobs:
       - name: Build Web (PRD)
         run: cd packages/web && bun run build
         env:
-          VITE_API_URL: ${{ vars.VITE_API_URL_PRD }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL_PRD }}
 
       - name: Build Admin (PRD)
         run: cd packages/admin && bun run build
@@ -588,7 +588,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Package Lambda
         run: cd dist && zip -r ../lambda.zip .
@@ -596,13 +596,13 @@ jobs:
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code \
-            --function-name ${{ vars.LAMBDA_FUNCTION_API_PRD }} \
+            --function-name ${{ secrets.LAMBDA_FUNCTION_API_PRD }} \
             --zip-file fileb://lambda.zip
 
       - name: Wait for update
         run: |
           aws lambda wait function-updated \
-            --function-name ${{ vars.LAMBDA_FUNCTION_API_PRD }}
+            --function-name ${{ secrets.LAMBDA_FUNCTION_API_PRD }}
 
   deploy-web:
     name: Deploy Web to S3 (PRD)
@@ -620,15 +620,15 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync to S3
-        run: aws s3 sync dist/ s3://${{ vars.S3_BUCKET_WEB_PRD }} --delete
+        run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_WEB_PRD }} --delete
 
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ vars.CF_DISTRIBUTION_WEB_PRD }} \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_WEB_PRD }} \
             --paths "/*"
 
   deploy-admin:
@@ -647,15 +647,15 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync to S3
-        run: aws s3 sync dist/ s3://${{ vars.S3_BUCKET_ADMIN_PRD }} --delete
+        run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_ADMIN_PRD }} --delete
 
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ vars.CF_DISTRIBUTION_ADMIN_PRD }} \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_ADMIN_PRD }} \
             --paths "/*"
 
   deploy-crons:
@@ -674,7 +674,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Package Lambda
         run: cd dist && zip -r ../lambda.zip .
@@ -682,13 +682,13 @@ jobs:
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code \
-            --function-name ${{ vars.LAMBDA_FUNCTION_CRON_PRD }} \
+            --function-name ${{ secrets.LAMBDA_FUNCTION_CRON_PRD }} \
             --zip-file fileb://lambda.zip
 
       - name: Wait for update
         run: |
           aws lambda wait function-updated \
-            --function-name ${{ vars.LAMBDA_FUNCTION_CRON_PRD }}
+            --function-name ${{ secrets.LAMBDA_FUNCTION_CRON_PRD }}
 
   deploy-assets:
     name: Deploy Assets to S3 (PRD)
@@ -703,10 +703,10 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync assets to S3
-        run: aws s3 sync assets/ s3://${{ vars.S3_BUCKET_ASSETS_PRD }} --delete
+        run: aws s3 sync assets/ s3://${{ secrets.S3_BUCKET_ASSETS_PRD }} --delete
 
   migrate:
     name: Run DB Migrations (PRD)
@@ -728,12 +728,12 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Get DATABASE_URL from Secrets Manager
         run: |
           DB_URL=$(aws secretsmanager get-secret-value \
-            --secret-id ${{ vars.SECRETS_MANAGER_PRD }} \
+            --secret-id ${{ secrets.SECRETS_MANAGER_PRD }} \
             --query 'SecretString' --output text | jq -r '.DATABASE_URL')
           echo "DATABASE_URL=${DB_URL}" >> $GITHUB_ENV
 

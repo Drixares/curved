@@ -136,7 +136,7 @@ Pour chaque role (`github-deploy-stg` et `github-deploy-prd`), va dans **Permiss
 ## 4. Configurer les variables GitHub
 
 **C'est quoi ?**
-Les GitHub Environment Variables (`vars`) sont des valeurs non-secrètes accessibles dans les workflows. Tu vas y stocker l'ARN du role pour que chaque job sache quel role assumer.
+Les GitHub Environment Variables (`secrets`) sont des valeurs non-secrètes accessibles dans les workflows. Tu vas y stocker l'ARN du role pour que chaque job sache quel role assumer.
 
 1. Va dans **GitHub → Settings → Environments**
 2. Pour l'environment **staging**, ajoute la variable :
@@ -161,7 +161,7 @@ permissions:
   with:
     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    aws-region: ${{ vars.AWS_REGION }}
+    aws-region: ${{ secrets.AWS_REGION }}
 ```
 
 **Après :**
@@ -174,8 +174,8 @@ permissions:
 # ...
 - uses: aws-actions/configure-aws-credentials@v4
   with:
-    role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-    aws-region: ${{ vars.AWS_REGION }}
+    role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+    aws-region: ${{ secrets.AWS_REGION }}
 ```
 
 ---
