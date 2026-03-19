@@ -1,0 +1,4 @@
+--platform ubuntu-latest=catthehacker/ubuntu:act-latest
+--container-architecture linux/amd64
+--secret-file .secrets
+--artifact-server-path /tmp/act-artifacts
