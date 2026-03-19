@@ -246,3 +246,28 @@ export const issueRoutes = new Hono<{ Variables: AuthVariables }>()
       return c.json({ success: true })
     },
   )
+  .delete('/:issueId', async (c) => {
+    const session = c.get('session')
+    const orgId = session.activeOrganizationId
+
+    if (!orgId) {
+      return c.json({ error: 'No active organization' }, 400)
+    }
+
+    const { issueId } = c.req.param()
+
+    const found = await db.query.issue.findFirst({
+      where: and(eq(issue.id, issueId), isNull(issue.deletedAt)),
+      with: {
+        team: { columns: { organizationId: true } },
+      },
+    })
+
+    if (!found || found.team.organizationId !== orgId) {
+      return c.json({ error: 'Issue not found' }, 404)
+    }
+
+    await db.update(issue).set({ deletedAt: new Date() }).where(eq(issue.id, issueId))
+
+    return c.json({ success: true })
+  })
