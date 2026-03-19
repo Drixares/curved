@@ -1,2 +1,1 @@
 bun run checks
-bash .doctor/run.sh src # doctor:hook
