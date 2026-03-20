@@ -40,6 +40,8 @@ jobs:
 
       - name: Build Admin (PRD)
         run: cd packages/admin && bun run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL_PRD }}
 
       - name: Build API for Lambda
         run: cd packages/api && bun run build:lambda

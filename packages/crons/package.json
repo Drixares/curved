@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "build:lambda": "bun build src/lambda.ts --target node --outdir dist --minify",
+    "build:lambda": "bun build src/lambda.ts --target node --format cjs --outdir dist --minify",
     "package:lambda": "cd dist && zip -r ../lambda.zip ."
   },
   "dependencies": {
