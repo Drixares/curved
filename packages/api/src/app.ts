@@ -13,15 +13,12 @@ import { commentRoutes } from './routes/comments'
 import { attachmentRoutes } from './routes/attachments'
 import { adminRoutes } from './routes/admin'
 
-const DEFAULT_ORIGINS = ['http://localhost:5173', 'http://localhost:5174']
-const corsOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : DEFAULT_ORIGINS
-
 const app = new Hono<{ Variables: AuthVariables }>()
 
 app.use(
   '/*',
   cors({
-    origin: corsOrigins,
+    origin: (origin) => origin,
     credentials: true,
   }),
 )
