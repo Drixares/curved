@@ -1,6 +1,6 @@
 {
-  "id": "28f20554-90de-44df-be54-ff6e33ffa6b5",
-  "prevId": "79cec5e8-d9cb-45c5-a939-3385d0734359",
+  "id": "31b4f20a-76f3-482f-b802-95c3457ebcce",
+  "prevId": "28f20554-90de-44df-be54-ff6e33ffa6b5",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1829,6 +1829,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "project_id": {
+          "name": "project_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "assignee_id": {
           "name": "assignee_id",
           "type": "text",
@@ -1881,6 +1887,21 @@
           "columns": [
             {
               "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "issue_projectId_idx": {
+          "name": "issue_projectId_idx",
+          "columns": [
+            {
+              "expression": "project_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1975,6 +1996,15 @@
           "columnsFrom": ["team_id"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "issue_project_id_project_id_fk": {
+          "name": "issue_project_id_project_id_fk",
+          "tableFrom": "issue",
+          "tableTo": "project",
+          "columnsFrom": ["project_id"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
           "onUpdate": "no action"
         },
         "issue_assignee_id_user_id_fk": {
@@ -2100,115 +2130,6 @@
           "tableFrom": "issue_label",
           "tableTo": "label",
           "columnsFrom": ["label_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.issue_project": {
-      "name": "issue_project",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "issue_id": {
-          "name": "issue_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "project_id": {
-          "name": "project_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "issueProject_issueId_idx": {
-          "name": "issueProject_issueId_idx",
-          "columns": [
-            {
-              "expression": "issue_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "issueProject_projectId_idx": {
-          "name": "issueProject_projectId_idx",
-          "columns": [
-            {
-              "expression": "project_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "issueProject_issue_project_uidx": {
-          "name": "issueProject_issue_project_uidx",
-          "columns": [
-            {
-              "expression": "issue_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "project_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "issue_project_issue_id_issue_id_fk": {
-          "name": "issue_project_issue_id_issue_id_fk",
-          "tableFrom": "issue_project",
-          "tableTo": "issue",
-          "columnsFrom": ["issue_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "issue_project_project_id_project_id_fk": {
-          "name": "issue_project_project_id_project_id_fk",
-          "tableFrom": "issue_project",
-          "tableTo": "project",
-          "columnsFrom": ["project_id"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
