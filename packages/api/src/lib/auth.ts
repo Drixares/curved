@@ -4,10 +4,20 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { lastLoginMethod, organization } from 'better-auth/plugins'
 import { db } from '../db'
+import { status } from '../db/schema'
 import { ChangeEmailEmail } from '../emails/change-email'
 import { InvitationEmail } from '../emails/invitation-email'
 import { getUserOrganizations } from './auth-utils'
 import { sendEmail } from './ses'
+
+const DEFAULT_STATUSES = [
+  { name: 'Backlog', color: '#94a3b8', position: 0, type: 'backlog', isDefault: true },
+  { name: 'Todo', color: '#64748b', position: 1, type: 'unstarted', isDefault: false },
+  { name: 'In Progress', color: '#f59e0b', position: 2, type: 'started', isDefault: false },
+  { name: 'In Review', color: '#8b5cf6', position: 3, type: 'started', isDefault: false },
+  { name: 'Done', color: '#22c55e', position: 4, type: 'completed', isDefault: false },
+  { name: 'Cancelled', color: '#ef4444', position: 5, type: 'cancelled', isDefault: false },
+] as const
 
 export const BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
 
@@ -74,6 +84,17 @@ export const auth = betterAuth({
           subject: `Join ${data.organization.name} on Curved`,
           html,
         }).catch(console.error)
+      },
+      organizationHooks: {
+        async afterCreateOrganization({ organization: org }) {
+          await db.insert(status).values(
+            DEFAULT_STATUSES.map((s) => ({
+              id: crypto.randomUUID(),
+              ...s,
+              organizationId: org.id,
+            })),
+          )
+        },
       },
     }),
   ],

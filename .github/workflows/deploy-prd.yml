@@ -109,8 +109,27 @@ jobs:
           echo "::add-mask::${DB_URL}"
           echo "DATABASE_URL=${DB_URL}" >> $GITHUB_ENV
 
+      - name: Get admin seed credentials from Secrets Manager
+        run: |
+          SECRET_JSON=$(aws secretsmanager get-secret-value \
+            --secret-id ${{ secrets.SECRETS_MANAGER_PRD }} \
+            --query 'SecretString' --output text)
+          ADMIN_EMAIL=$(echo "$SECRET_JSON" | jq -r '.ADMIN_SEED_EMAIL')
+          ADMIN_PASSWORD=$(echo "$SECRET_JSON" | jq -r '.ADMIN_SEED_PASSWORD')
+          ADMIN_NAME=$(echo "$SECRET_JSON" | jq -r '.ADMIN_SEED_NAME // "Admin"')
+          if [ -n "$ADMIN_EMAIL" ] && [ "$ADMIN_EMAIL" != "null" ]; then
+            echo "::add-mask::${ADMIN_EMAIL}"
+            echo "::add-mask::${ADMIN_PASSWORD}"
+            echo "ADMIN_SEED_EMAIL=${ADMIN_EMAIL}" >> $GITHUB_ENV
+            echo "ADMIN_SEED_PASSWORD=${ADMIN_PASSWORD}" >> $GITHUB_ENV
+            echo "ADMIN_SEED_NAME=${ADMIN_NAME}" >> $GITHUB_ENV
+          fi
+
       - name: Run migrations
         run: cd packages/api && bun run db:migrate
+
+      - name: Seed admin user
+        run: cd packages/api && bun run db:seed-admin
 
   deploy-api:
     name: Deploy API to Lambda (PRD)
