@@ -5,10 +5,16 @@ import CommentInput from './comment-input'
 type CommentThreadProps = {
   comment: Comment
   onReply: (body: string, parentId: string) => void
+  onAttach?: (file: File) => void
   isReplying?: boolean
 }
 
-export default function CommentThread({ comment, onReply, isReplying }: CommentThreadProps) {
+export default function CommentThread({
+  comment,
+  onReply,
+  onAttach,
+  isReplying,
+}: CommentThreadProps) {
   const hasReplies = comment.replies && comment.replies.length > 0
 
   return (
@@ -37,6 +43,7 @@ export default function CommentThread({ comment, onReply, isReplying }: CommentT
         <CommentInput
           placeholder="Leave a reply..."
           onSubmit={(body) => onReply(body, comment.id)}
+          onAttach={onAttach}
           isLoading={isReplying}
           variant="reply"
         />

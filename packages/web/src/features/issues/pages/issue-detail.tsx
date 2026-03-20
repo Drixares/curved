@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import ActivitySection from '@/features/issues/components/activity-section'
+import AttachmentsSection from '@/features/issues/components/attachments-section'
 import IssueSidebar from '@/features/issues/components/issue-sidebar'
 import { useIssue } from '@/features/issues/hooks/use-issue'
 import { useTeamLabels } from '@/features/issues/hooks/use-team-labels'
@@ -126,6 +127,11 @@ export default function IssueDetail() {
         />
 
         <Separator className="mb-6" />
+
+        {/* Attachments */}
+        <AttachmentsSection issueId={issue.id} />
+
+        <Separator className="my-6" />
 
         {/* Activity + Comments */}
         <ActivitySection issueId={issue.id} creator={issue.creator} createdAt={issue.createdAt} />

@@ -50,6 +50,13 @@
       "when": 1773998522570,
       "tag": "0006_simple_miracleman",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774003353563,
+      "tag": "0007_opposite_johnny_blaze",
+      "breakpoints": true
     }
   ]
 }

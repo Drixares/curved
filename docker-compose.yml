@@ -40,6 +40,9 @@ services:
       ADMIN_SEED_EMAIL: ${ADMIN_SEED_EMAIL:-admin@curved.dev}
       ADMIN_SEED_PASSWORD: ${ADMIN_SEED_PASSWORD:-CurvedAdmin2026!}
       ADMIN_SEED_NAME: ${ADMIN_SEED_NAME:-Admin}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION:-eu-north-1}
     depends_on:
       postgres:
         condition: service_healthy

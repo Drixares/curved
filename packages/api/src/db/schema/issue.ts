@@ -6,6 +6,7 @@ import { project } from './project'
 import { status } from './status'
 import { label } from './label'
 import { comment } from './comment'
+import { attachment } from './attachment'
 
 export const issue = pgTable(
   'issue',
@@ -89,6 +90,7 @@ export const issueRelations = relations(issue, ({ one, many }) => ({
   }),
   labels: many(issueLabel),
   comments: many(comment),
+  attachments: many(attachment),
 }))
 
 export const issueLabelRelations = relations(issueLabel, ({ one }) => ({

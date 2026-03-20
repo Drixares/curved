@@ -19,6 +19,16 @@ export function formatDateWithYear(dateStr: string | null | undefined) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
+export function formatFileSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+export function isImageMimeType(mimeType: string) {
+  return mimeType.startsWith('image/')
+}
+
 export function formatRelativeTime(dateStr: string) {
   const date = new Date(dateStr)
   const now = new Date()

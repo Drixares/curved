@@ -2,6 +2,7 @@ import { formatRelativeTime, getInitials } from '@/shared/lib/format'
 import { Avatar, AvatarFallback, AvatarImage } from '@curved/ui'
 import { useComments } from '../hooks/use-comments'
 import { useCreateComment } from '../hooks/use-create-comment'
+import { useUploadAttachment } from '../hooks/use-upload-attachment'
 import CommentInput from './comment-input'
 import CommentThread from './comment-thread'
 
@@ -14,6 +15,7 @@ type ActivitySectionProps = {
 export default function ActivitySection({ issueId, creator, createdAt }: ActivitySectionProps) {
   const { data: comments = [] } = useComments(issueId)
   const { mutate: createComment, isPending } = useCreateComment(issueId)
+  const { mutate: uploadAttachment } = useUploadAttachment(issueId)
 
   function handleComment(body: string) {
     createComment({ body })
@@ -21,6 +23,10 @@ export default function ActivitySection({ issueId, creator, createdAt }: Activit
 
   function handleReply(body: string, parentId: string) {
     createComment({ body, parentId })
+  }
+
+  function handleAttach(file: File) {
+    uploadAttachment({ file })
   }
 
   return (
@@ -43,6 +49,7 @@ export default function ActivitySection({ issueId, creator, createdAt }: Activit
             key={comment.id}
             comment={comment}
             onReply={handleReply}
+            onAttach={handleAttach}
             isReplying={isPending}
           />
         ))}
@@ -51,6 +58,7 @@ export default function ActivitySection({ issueId, creator, createdAt }: Activit
       <CommentInput
         placeholder="Leave a comment..."
         onSubmit={handleComment}
+        onAttach={handleAttach}
         isLoading={isPending}
       />
     </div>

@@ -21,14 +21,16 @@
     "package:lambda": "cd dist && zip -r ../lambda.zip ."
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1013.0",
+    "@aws-sdk/client-ses": "^3.1013.0",
+    "@aws-sdk/s3-request-presigner": "^3.1013.0",
     "@better-auth/passkey": "^1.5.5",
     "@react-email/components": "^1.0.9",
     "better-auth": "^1",
     "drizzle-orm": "^0.45.1",
     "hono": "^4",
     "postgres": "^3.4.8",
-    "react": "^19.2.4",
-    "resend": "^6.9.3"
+    "react": "^19.2.4"
   },
   "devDependencies": {
     "@types/bun": "latest",
