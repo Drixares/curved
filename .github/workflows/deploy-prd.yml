@@ -95,16 +95,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PRD }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Get runner public IP
-        run: echo "RUNNER_IP=$(curl -s https://api.ipify.org)" >> $GITHUB_ENV
-
-      - name: Allow runner IP in RDS security group
-        run: |
-          aws ec2 authorize-security-group-ingress \
-            --group-id ${{ secrets.RDS_SECURITY_GROUP_ID_PRD }} \
-            --protocol tcp --port 5432 \
-            --cidr ${RUNNER_IP}/32
-
       - name: Get DATABASE_URL from Secrets Manager
         run: |
           DB_URL=$(aws secretsmanager get-secret-value \
@@ -119,14 +109,6 @@ jobs:
 
       - name: Run migrations
         run: cd packages/api && bun run db:migrate
-
-      - name: Revoke runner IP from RDS security group
-        if: always()
-        run: |
-          aws ec2 revoke-security-group-ingress \
-            --group-id ${{ secrets.RDS_SECURITY_GROUP_ID_PRD }} \
-            --protocol tcp --port 5432 \
-            --cidr ${RUNNER_IP}/32
 
   deploy-api:
     name: Deploy API to Lambda (PRD)
