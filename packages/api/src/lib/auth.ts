@@ -17,6 +17,15 @@ export const auth = betterAuth({
   }),
   baseURL: BASE_URL,
   trustedOrigins: ['*'],
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: true,
+    },
+    defaultCookieAttributes: {
+      sameSite: 'none',
+      secure: true,
+    },
+  },
   user: {
     changeEmail: {
       enabled: true,
